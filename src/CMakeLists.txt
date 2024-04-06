@@ -24,9 +24,6 @@ else()
     message(STATUS "Building tests with process isolation enabled")
 endif()
 
-set_target_properties(overture overture_test PROPERTIES
-    INTERPROCEDURAL_OPTIMIZATION_RELEASE ON)
-
 install(
     TARGETS overture overture_test
     EXPORT overture)
