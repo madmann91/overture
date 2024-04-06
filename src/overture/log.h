@@ -60,7 +60,7 @@ void log_msg(
 [[gnu::format(printf, 3, 4)]]
 void log_error(struct log*, const struct source_range*, const char* fmt, ...);
 
-/// Prints an warning message.
+/// Prints a warning message.
 /// @see log_msg.
 [[gnu::format(printf, 3, 4)]]
 void log_warn(struct log*, const struct source_range*, const char* fmt, ...);
