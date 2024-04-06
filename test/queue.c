@@ -1,4 +1,4 @@
-#include <overture/test_macros.h>
+#include <overture/test.h>
 #include <overture/queue.h>
 
 static inline bool less_than_int(const int* i, const int* j) { return *i < *j; }

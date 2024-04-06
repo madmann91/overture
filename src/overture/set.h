@@ -6,12 +6,10 @@
 
 #include <string.h>
 
-/**
- * @file 
- *
- * Hash set data structure providing fast insertion, search, and removal.
- * @see hash_table.
- */
+/// @file
+///
+/// Hash set data structure providing fast insertion, search, and removal.
+/// @see hash_table.
 
 #define SET_DEFAULT_CAPACITY 4
 #define SET_PREFIX set_very_long_prefix_

@@ -17,6 +17,6 @@ RECURSIVE              = YES
 USE_MDFILE_AS_MAINPAGE = README.md
 HTML_EXTRA_STYLESHEET  = doc/doxygen-awesome-css/doxygen-awesome.css \
                          doc/doxygen-awesome-css/doxygen-awesome-sidebar-only.css
-STRIP_FROM_PATH        = include
+STRIP_FROM_PATH        = src
 GENERATE_TREEVIEW      = YES
 GENERATE_LATEX         = NO

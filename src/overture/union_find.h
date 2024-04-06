@@ -2,12 +2,10 @@
 
 #include <stddef.h>
 
-/**
- * @file
- *
- * Union-find algorithm. This union-find algorithm works with an array of integers representing the
- * links between the elements.
- */
+/// @file
+///
+/// Union-find algorithm. This union-find algorithm works with an array of integers representing the
+/// links between the elements.
 
 /// @return The representative for the given element. This may modify the array during the search.
 static inline size_t union_find(size_t* parents, size_t x) {

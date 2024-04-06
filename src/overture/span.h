@@ -1,10 +1,8 @@
 #pragma once
 
-/**
- * @file
- *
- * Span data structure which represents a continuous range of elements in memory.
- */
+/// @file
+///
+/// Span data structure which represents a continuous range of elements in memory.
 
 /// Iterates over the elements of a span.
 /// @param elem_ty Type of the elements in the span.

@@ -1,4 +1,4 @@
-#include <overture/test_macros.h>
+#include <overture/test.h>
 #include <overture/mem_pool.h>
 
 #include <string.h>

@@ -9,13 +9,11 @@
 #include <stdint.h>
 #include <stdio.h>
 
-/**
- * @file 
- *
- * Graph data structure, where edges and nodes are hashed by their label. Each node can carry a
- * number of additional user-defined pointers or integers that is defined during the construction
- * of the graph. This mechanism can be used to link the nodes of the graph to other data structures.
- */
+/// @file
+///
+/// Graph data structure, where edges and nodes are hashed by their label. Each node can carry a
+/// number of additional user-defined pointers or integers that is defined during the construction
+/// of the graph. This mechanism can be used to link the nodes of the graph to other data structures.
 
 /// Iterates over the edges of a node, in the given direction.
 /// @see graph_dir.

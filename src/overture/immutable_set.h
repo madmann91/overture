@@ -7,12 +7,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-/**
- * @file 
- *
- * Immutable set data structure. Immutable sets are represented as sorted arrays, that
- * are placed in a set data structure, ensuring that there are unique.
- */
+/// @file
+///
+/// Immutable set data structure. Immutable sets are represented as sorted arrays, that
+/// are placed in a set data structure, ensuring that there are unique.
 
 #define IMMUTABLE_SET_POOL_DEFAULT_CAPACITY 4
 #define IMMUTABLE_SET_SMALL_CAPACITY 4

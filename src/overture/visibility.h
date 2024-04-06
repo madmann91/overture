@@ -1,5 +1,9 @@
 #pragma once
 
+/// @file
+///
+/// Symbol visibility control for data structure instantiation.
+
 /// Macro that constrains the visibility of a symbol.
 /// @param vis Visibility of the symbol, which can be either `PUBLIC` or `PRIVATE`.
 /// Data structures that accept a visibility parameter can be instantiated publicly by using such

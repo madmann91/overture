@@ -6,13 +6,11 @@
 
 #include <assert.h>
 
-/**
- * @file
- *
- * Queue data structure providing fast maximum (or minimum, depending on the provided comparison
- * function) element access.
- * @see heap_push, heap_pop.
- */
+/// @file
+///
+/// Queue data structure providing fast maximum (or minimum, depending on the provided comparison
+/// function) element access.
+/// @see heap_push, heap_pop.
 
 /// Declares and implements a queue.
 /// @param name Name of the structure representing the queue.

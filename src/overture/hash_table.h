@@ -10,12 +10,10 @@
 #include "primes.h"
 #include "alloc.h"
 
-/**
- * @file 
- *
- * Low-level hash table data structure. When possible, prefer the use of the map or set data
- * structures, as they provide more type safety.
- */
+/// @file
+///
+/// Low-level hash table data structure. When possible, prefer the use of the map or set data
+/// structures, as they provide more type safety.
 
 /// Hash table. Can represent both a map or a set.
 struct hash_table {

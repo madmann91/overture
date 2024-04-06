@@ -6,13 +6,11 @@
 #include <string.h>
 #include <stdlib.h>
 
-/**
- * @file
- *
- * Vector and small vector data structures which grow and can be resized as needed. Small vectors
- * are stored on the stack when they are small enough, and are moved on the heap when they become
- * too big.
- */
+/// @file
+///
+/// Vector and small vector data structures which grow and can be resized as needed. Small vectors
+/// are stored on the stack when they are small enough, and are moved on the heap when they become
+/// too big.
 
 #define SMALL_VEC_CAPACITY 4
 

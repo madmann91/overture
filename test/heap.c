@@ -1,4 +1,4 @@
-#include <overture/test_macros.h>
+#include <overture/test.h>
 #include <overture/heap.h>
 #include <overture/minstd.h>
 #include <overture/alloc.h>

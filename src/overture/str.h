@@ -11,12 +11,10 @@
 #include <stdarg.h>
 #include <assert.h>
 
-/**
- * @file 
- *
- * Strings and string views. Strings are manually allocated and freed, while string views represent
- * lightweight references to a string in memory.
- */
+/// @file
+///
+/// Strings and string views. Strings are manually allocated and freed, while string views represent
+/// lightweight references to a string in memory.
 
 /// Constructs a string view from the given C string.
 #define STR_VIEW(x) ((struct str_view) { .data = (x), .length = strlen((x)) })
@@ -50,6 +48,7 @@ struct str {
     return (struct str) {};
 }
 
+/// Shrinks a string view by the given number of characters on the left and on the right.
 [[nodiscard]] static inline struct str_view str_view_shrink(struct str_view str_view, size_t left, size_t right) {
     assert(str_view.length >= left + right);
     return (struct str_view) { .data = str_view.data + left, .length = str_view.length - left - right };

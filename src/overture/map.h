@@ -6,12 +6,10 @@
 
 #include <string.h>
 
-/**
- * @file 
- *
- * Hash map data structure providing fast insertion, search, and removal.
- * @see hash_table.
- */
+/// @file
+///
+/// Hash map data structure providing fast insertion, search, and removal.
+/// @see hash_table.
 
 #define MAP_DEFAULT_CAPACITY 4
 #define MAP_PREFIX map_very_long_prefix_

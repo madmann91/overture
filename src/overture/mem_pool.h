@@ -3,12 +3,10 @@
 #include <stddef.h>
 #include <stdalign.h>
 
-/**
- * @file
- *
- * Memory pool that allocates blocks of memory suitable for any object type. The pool can be reset,
- * allowing to re-use its blocks for other objects.
- */
+/// @file
+///
+/// Memory pool that allocates blocks of memory suitable for any object type. The pool can be reset,
+/// allowing to re-use its blocks for other objects.
 
 struct mem_block;
 
@@ -23,11 +21,14 @@ struct mem_pool {
 
 /// Creates an empty memory pool.
 [[nodiscard]] struct mem_pool mem_pool_create(void);
+
 /// Destroys a memory pool.
 void mem_pool_destroy(struct mem_pool*);
+
 /// Resets a memory pool by setting its next free pointer to the first allocated block.
 /// This does not free the memory, but instead makes it available for the following allocations.
 void mem_pool_reset(struct mem_pool*);
+
 /// Allocates a memory on a pool.
 /// @param mem_pool Memory pool to use.
 /// @param size Size of the object to allocate (in bytes).

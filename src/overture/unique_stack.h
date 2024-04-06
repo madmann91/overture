@@ -3,13 +3,11 @@
 #include "vec.h"
 #include "set.h"
 
-/**
- * @file
- *
- * Stack-like data structure where elements can only be pushed once, no matter if it has been popped
- * or not. This data structure is built from a vector and a hash set, and makes the traversal of
- * graph-like data structures easier.
- */
+/// @file
+///
+/// Stack-like data structure where elements can only be pushed once, no matter if it has been popped
+/// or not. This data structure is built from a vector and a hash set, and makes the traversal of
+/// graph-like data structures easier.
 
 /// Declares and implements a unique stack data structure.
 /// @param name Name of the structure representing the unique stack.

@@ -11,11 +11,9 @@
 #include <unistd.h>
 #endif
 
-/**
- * @file 
- *
- * Macros to produce ANSI terminal codes.
- */
+/// @file
+///
+/// Macros to work with ANSI terminal codes.
 
 /// Produce a terminal code sequence with only one element.
 #define TERM1(x)       "\33[" x "m"

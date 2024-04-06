@@ -1,4 +1,4 @@
-#include <overture/test_macros.h>
+#include <overture/test.h>
 #include <overture/immutable_set.h>
 
 static inline uint32_t hash_int(uint32_t h, const int* i) { return hash_uint32(h, *i); }

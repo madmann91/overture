@@ -5,11 +5,9 @@
 #include <string.h>
 #include <stdalign.h>
 
-/**
- * @file
- *
- * Low-level heap data structure manipulation functions.
- */
+/// @file
+///
+/// Low-level heap data structure manipulation functions.
 
 /// Accesses the element at the given index in an untyped heap.
 static inline void* heap_at(void* begin, size_t size, size_t i) {

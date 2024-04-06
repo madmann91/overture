@@ -4,6 +4,10 @@
 #include <stddef.h>
 #include <stdlib.h>
 
+/// @file
+///
+/// Safer allocation routines.
+
 /// Stops the program with the given message.
 // GCOV_EXCL_START
 [[noreturn]]

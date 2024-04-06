@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+/// @file
+///
+/// _minstd0_ random number generator.
+
 /// Random number generator using the _minstd0_ algorithm.
 static inline uint32_t minstd_gen(uint32_t* state) {
     uint64_t p = ((uint64_t)*state) * 48271;

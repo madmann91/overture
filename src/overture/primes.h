@@ -3,11 +3,9 @@
 #include <stddef.h>
 #include <assert.h>
 
-/**
- * @file 
- *
- * List of primes specifically designed for hash tables.
- */
+/// @file
+///
+/// List of primes specifically designed for hash tables.
 
 #define MIN_PRIME 7
 #define MAX_PRIME 1048583

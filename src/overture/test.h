@@ -2,43 +2,69 @@
 
 #include "vec.h"
 
+/// @file
+///
+/// Test framework for C programs. Supports process isolation on POSIX platforms. With this
+/// framework, tests can be written with very little code:
+///
+/// ```c
+/// TEST(my_test) {
+///     REQUIRE(1 != 2);
+/// }
+/// ```
+///
+/// The snippet above creates a test named `my_test` that is automatically registered at startup.
+/// A test driver can choose to enable or disable tests, and can then run the tests simply by
+/// calling `run_tests()`:
+///
+/// ```c
+/// reset_tests(false);
+/// enable_matching_tests("foo");
+/// run_tests();
+/// ```
+///
+/// The code above automatically takes care of spawning processes and running every test.
+
 #include <stddef.h>
 #include <stdbool.h>
 
-#ifndef TEST_DISABLE_FORK
-#include <sys/types.h>
-#endif
+/// Declares a test with the given name. The test is automatically registered at startup. The test
+/// is disabled by default, use @ref filter_test to enable it based on filters.
+#define TEST(name) \
+    void test_##name(struct test_context*); \
+    __attribute__((constructor)) void register_##name() { register_test(#name, test_##name); } \
+    void test_##name([[maybe_unused]] struct test_context* context)
+
+/// Asserts that the given condition is `true`. Fails the test if it is not the case.
+#define REQUIRE(x) \
+    do { \
+        if (!(x)) \
+            require_fail(context, #x, __FILE__, __LINE__); \
+        else \
+            require_success(context); \
+    } while (false)
 
 struct test_context;
 
-/// Test status.
-enum test_status {
-    TEST_NOT_RUN,
-    TEST_PASSED,
-    TEST_FAILED,
-    TEST_SEGFAULT
-};
+/// Run all the enabled tests, and then print the result on the standard output.
+/// @return `true` on success, `false` otherwise.
+bool run_tests(bool disable_colors);
 
-/// Data structure representing a test.
-struct test {
-    const char* name;        ///< Test name.
-    bool enabled;            ///< Flag controlling whether this test should be enabled or not.
-    enum test_status status; ///< Test status.
-    size_t passed_asserts;   ///< Number of assertions that passed. Only valid after the test was run.
+/// Filters tests based on the names that appear in the given list of arguments.
+/// @param argc Number of elements in @ref argv.
+/// @param argv Prefixes to use for matching.
+/// If there are no filters, all tests are enabled. This means that running `filter_tests(0, NULL)`
+/// enables all tests. Additionally, individual values in `argv` may be NULL.
+void filter_tests(int argc, char** argv);
 
-    /// Function representing the test. The context passed as argument is used to track the
-    /// execution status.
-    void (*test_func) (struct test_context*);
+/// Prints available test names, separated by new lines, on the given stream.
+void print_test_names(FILE*);
 
-#ifndef TEST_DISABLE_FORK
-    pid_t pid;              ///< Process ID of the process running the test.
-    int read_pipe;          ///< Pipe to read the status from.
-#endif
-};
+/// Internal function called by the framework when a requirement fails. Do not call directly.
+[[noreturn]] void require_fail(struct test_context*, const char*, const char*, unsigned);
 
-VEC_DECL(test_vec, struct test, PUBLIC)
+/// Internal function called by the framework when a requirement succeeds. Do not call directly.
+void require_success(struct test_context*);
 
-extern struct test_vec tests;
-
-/// Run all the tests that have been registered previously, and that are enabled.
-void run_tests(void);
+/// Internal function to register a test. Do not call directly.
+void register_test(const char*, void (*) (struct test_context*));

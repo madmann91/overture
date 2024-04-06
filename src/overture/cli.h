@@ -8,25 +8,25 @@
 #include <string.h>
 #include <inttypes.h>
 
-/**
- * @file 
- *
- * Command-line interface parser. This module simplifies command-line argument parsing by providing
- * data types and functions to declaratively produce a command-line interface parser. Here is an
- * example of a parser built using this module:
- *
- *      // in main()
- *      struct cli_option cli_options[] = {
- *          { .short_name = "-h", .long_name = "--help", .parse = usage },
- *          { .long_name = "--version", .parse = version },
- *          cli_option_string(NULL, "--codegen", &options.codegen),
- *          cli_flag(NULL, "--no-color",   &options.disable_colors),
- *          cli_flag(NULL, "--no-cleanup", &options.disable_cleanup),
- *          cli_flag("-v", "--verbose",    &options.is_verbose)
- *      };
- *      if (!cli_parse_options(argc, argv, cli_options, sizeof(cli_options) / sizeof(cli_options[0])))
- *          return 1;
- */
+/// @file
+///
+/// Command-line interface parser. This module simplifies command-line argument parsing by providing
+/// data types and functions to declaratively produce a command-line interface parser. Here is an
+/// example of a parser built using this module:
+///
+/// ```c
+/// // in main()
+/// struct cli_option cli_options[] = {
+///     { .short_name = "-h", .long_name = "--help", .parse = usage },
+///     { .long_name = "--version", .parse = version },
+///     cli_option_string(NULL, "--codegen", &options.codegen),
+///     cli_flag(NULL, "--no-color",   &options.disable_colors),
+///     cli_flag(NULL, "--no-cleanup", &options.disable_cleanup),
+///     cli_flag("-v", "--verbose",    &options.is_verbose)
+/// };
+/// if (!cli_parse_options(argc, argv, cli_options, sizeof(cli_options) / sizeof(cli_options[0])))
+///     return 1;
+/// ```
 
 /// Command-line parser state.
 enum cli_state {
@@ -71,7 +71,7 @@ static inline enum cli_state cli_set_uint32(void* data, char* arg) {
     return *(uint32_t*)data = strtoul(arg, NULL, 10), CLI_STATE_ACCEPTED;
 }
 
-/// Produces an option that takes a 32-bit unsigned integer as an argument. 
+/// Produces an option that takes a 32-bit unsigned integer as an argument.
 [[nodiscard]] static inline struct cli_option cli_option_uint32(
     const char* short_name,
     const char* long_name,
@@ -91,7 +91,7 @@ static inline enum cli_state cli_set_uint64(void* data, char* arg) {
     return *(uint64_t*)data = strtoumax(arg, NULL, 10), CLI_STATE_ACCEPTED;
 }
 
-/// Produces an option that takes a 64-bit unsigned integer as an argument. 
+/// Produces an option that takes a 64-bit unsigned integer as an argument.
 [[nodiscard]] static inline struct cli_option cli_option_uint64(
     const char* short_name,
     const char* long_name,
@@ -111,7 +111,7 @@ static inline enum cli_state cli_set_string(void* data, char* arg) {
     return *(char**)data = arg, CLI_STATE_ACCEPTED;
 }
 
-/// Produces an option that takes a string as an argument. 
+/// Produces an option that takes a string as an argument.
 [[nodiscard]] static inline struct cli_option cli_option_string(
     const char* short_name,
     const char* long_name,

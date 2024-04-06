@@ -15,6 +15,10 @@
 #include <unistd.h>
 #endif
 
+/// @file
+///
+/// File manipulation functions.
+
 /// Reads the contents of a file into memory.
 /// @param file_name Name of the file on disk.
 /// @param size On return, contains the size of the resulting buffer, excluding the `NULL` terminator. May be `NULL`.

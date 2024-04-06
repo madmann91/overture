@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include <string.h>
 
+/// @file
+///
+/// Bit manipulation functions.
+
 static_assert(sizeof(uint64_t) == sizeof(double));
 static_assert(sizeof(uint32_t) == sizeof(float));
 

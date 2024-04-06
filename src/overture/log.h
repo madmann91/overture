@@ -6,12 +6,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
-/**
- * @file
- *
- * Error or warning log information. This can be used to produce accurate error messages for
- * compilers or parsers.
- */
+/// @file
+///
+/// Error or warning log information. This can be used to produce accurate error messages for
+/// compilers or parsers.
 
 /// Message type.
 enum msg_tag {

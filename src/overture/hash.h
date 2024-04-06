@@ -4,11 +4,10 @@
 
 #include <stdint.h>
 
-/**
- * @file
- *
- * FNV-1a hash function, for bytes, words, double words, quad words, floating-point numbers, and strings.
- */
+/// @file
+///
+/// FNV-1a hash function, for bytes, words, double words, quad words, floating-point numbers, and
+/// strings.
 
 [[nodiscard]] static inline uint32_t hash_init(void) {
     return 0x811c9dc5;
