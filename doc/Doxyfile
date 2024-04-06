@@ -1,0 +1,22 @@
+PROJECT_NAME           = Overture
+PROJECT_NUMBER         = 1.0
+PROJECT_BRIEF          = "A small data structures and algorithms library in C"
+OUTPUT_DIRECTORY       = doc/build
+JAVADOC_AUTOBRIEF      = YES
+OPTIMIZE_OUTPUT_FOR_C  = YES
+IDL_PROPERTY_SUPPORT   = NO
+EXTRACT_STATIC         = YES
+EXTRACT_LOCAL_CLASSES  = NO
+SHOW_INCLUDE_FILES     = NO
+FORCE_LOCAL_INCLUDES   = YES
+INPUT                  = \
+    src/overture/ \
+    README.md
+FILE_PATTERNS          = *.md *.h
+RECURSIVE              = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+HTML_EXTRA_STYLESHEET  = doc/doxygen-awesome-css/doxygen-awesome.css \
+                         doc/doxygen-awesome-css/doxygen-awesome-sidebar-only.css
+STRIP_FROM_PATH        = include
+GENERATE_TREEVIEW      = YES
+GENERATE_LATEX         = NO
