@@ -5,7 +5,7 @@ add_executable(unit_tests
     map.c
     set.c
     cli.c
-    io.c
+    file.c
     log.c
     mem_stream.c
     immutable_set.c

@@ -1,5 +1,16 @@
 #pragma once
 
+#include <stdio.h>
+#include <stdbool.h>
+
+#ifdef _WIN32
+#include <io.h>
+#define isatty _isatty
+#define fileno _fileno
+#else
+#include <unistd.h>
+#endif
+
 /**
  * @file 
  *
@@ -52,3 +63,9 @@
 #define TERM_BG_WHITE   "47"
 
 /// @}
+
+/// @return `true` if the given stream is a terminal, `false` otherwise.
+/// This may be used as a way to detect when to turn on/off ANSI color codes in the output.
+[[nodiscard]] static inline bool is_term(FILE* file) {
+    return isatty(fileno(file));
+}

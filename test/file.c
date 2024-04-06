@@ -1,11 +1,11 @@
 #include <overture/test_macros.h>
-#include <overture/io.h>
+#include <overture/file.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-TEST(io) {
+TEST(file) {
     static const char* file_name = "the_file.txt";
     static const char* contents = "Hello world!";
 
@@ -15,7 +15,7 @@ TEST(io) {
     fclose(file);
 
     size_t file_size;
-    char* buf = read_file(file_name, &file_size);
+    char* buf = file_read(file_name, &file_size);
     REQUIRE(file_size == strlen(contents));
     REQUIRE(strcmp(buf, contents) == 0);
     free(buf);

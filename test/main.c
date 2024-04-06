@@ -2,10 +2,8 @@
 #include <overture/test.h>
 #include <overture/term.h>
 #include <overture/cli.h>
-#include <overture/io.h>
 
 #include <stdio.h>
-
 
 struct options {
     bool disable_colors;
@@ -70,7 +68,7 @@ static size_t filter_tests(int argc, char** argv, const struct options*) {
 }
 
 int main(int argc, char** argv) {
-    struct options options = { .disable_colors = !is_terminal(stdout) };
+    struct options options = { .disable_colors = !is_term(stdout) };
     struct cli_option cli_options[] = {
         { .short_name = "-h", .long_name = "--help", .parse = usage },
         { .long_name = "--list", .parse = print_tests },

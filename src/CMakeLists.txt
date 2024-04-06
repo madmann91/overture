@@ -3,7 +3,6 @@ add_library(overture
     overture/log.c
     overture/cli.c
     overture/mem_pool.c
-    overture/io.c
     overture/graph.c
     overture/test.c)
 target_include_directories(overture PUBLIC
