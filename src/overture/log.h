@@ -43,11 +43,11 @@ struct log {
 /// Prints a log message.
 /// @param msg_tag Type of message to show.
 /// @param log The log where the message is printed.
-/// @param source_range Range of characters in the source file which the message refers to (may be `NULL`).
+/// @param source_range Range of characters in the source file which the message refers to. May be
+///   `NULL`, in which case no diagnostic is printed, and the source file name is not displayed in
+///   the output.
 /// @param fmt Formatting string, following the syntax of `printf`.
 /// @param args Argument list.
-/// If `source_range` is NULL, no diagnostic is printed, and the source file name is not displayed
-/// in the output.
 void log_msg(
     enum msg_tag msg_tag,
     struct log* log,

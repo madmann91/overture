@@ -7,6 +7,12 @@ target_include_directories(overture PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
+find_package(Threads QUIET)
+if (Threads_FOUND)
+    add_library(overture_threads overture/thread_pool.c)
+    target_link_libraries(overture_threads PUBLIC overture Threads::Threads)
+endif()
+
 add_library(overture_test overture/test.c)
 target_link_libraries(overture_test PUBLIC overture)
 if (WIN32 OR TEST_DISABLE_FORK)
