@@ -51,10 +51,10 @@ struct test_context;
 bool run_tests(bool disable_colors);
 
 /// Filters tests based on the names that appear in the given list of arguments.
-/// @param argc Number of elements in @ref argv.
-/// @param argv Prefixes to use for matching.
 /// If there are no filters, all tests are enabled. This means that running `filter_tests(0, NULL)`
 /// enables all tests. Additionally, individual values in `argv` may be NULL.
+/// @param argc Number of elements in @ref argv.
+/// @param argv Prefixes to use for matching.
 void filter_tests(int argc, char** argv);
 
 /// Prints available test names, separated by new lines, on the given stream.

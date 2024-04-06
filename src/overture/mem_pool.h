@@ -33,4 +33,4 @@ void mem_pool_reset(struct mem_pool*);
 /// @param mem_pool Memory pool to use.
 /// @param size Size of the object to allocate (in bytes).
 /// @param align Alignment of the object to allocate (in bytes).
-void* mem_pool_alloc(struct mem_pool*, size_t size, size_t align);
+void* mem_pool_alloc(struct mem_pool* mem_pool, size_t size, size_t align);

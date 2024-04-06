@@ -11,7 +11,7 @@
 ///
 /// Memory stream that provides a `FILE*` object that can be used to write to memory. On POSIX
 /// systems, this uses the ability to specify a custom read/write function on `FILE*` objects. On
-/// other systems, this might require to create a temporary file.
+/// other systems, this might require a temporary file.
 
 #if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 200809L
 #define ENABLE_MEMSTREAM

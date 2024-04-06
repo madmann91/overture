@@ -12,12 +12,13 @@
 
 /// List of primes. Can be instantiated with a given function macro like so:
 ///
-///     #define f(x) x,
-///     size_t primes[] = {
-///         PRIMES(f)
-///     };
-///     #undef f
-///
+/// ```c
+/// #define f(x) x,
+/// size_t primes[] = {
+///     PRIMES(f)
+/// };
+/// #undef f
+/// ```
 #define PRIMES(f) \
     f(MIN_PRIME) \
     f(17) \
@@ -45,13 +46,13 @@
 }
 
 /// Computes the remainder of the division of the given value by the given divisor. If the divisor
-/// is not a prime from the list of primes @ref PRIMES, this function still works, albeit a bit slower.
-[[nodiscard]] static inline size_t mod_prime(size_t i, size_t p) {
-    assert(p != 0);
-    switch (p) {
+/// is not a prime from the list @ref PRIMES, this function still works, albeit a bit slower.
+[[nodiscard]] static inline size_t mod_prime(size_t i, size_t divisor) {
+    assert(divisor != 0);
+    switch (divisor) {
 #define f(x) case x: return i % x;
     PRIMES(f)
 #undef f
-        default: return i % p;
+        default: return i % divisor;
     }
 }
