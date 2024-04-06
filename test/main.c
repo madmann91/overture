@@ -9,21 +9,21 @@ struct options {
     bool disable_colors;
 };
 
-static bool usage(void*, char*) {
+static enum cli_state usage(void*, char*) {
     printf(
         "usage: testdriver [options] filters ...\n"
         "options:\n"
         "   -h    --help       Shows this message.\n"
         "         --no-color   Turns of the use of color in the output.\n"
         "         --list       Lists all tests and exit.\n");
-    return false;
+    return CLI_STATE_ERROR;
 }
 
-static bool print_tests(void*, char*) {
+static enum cli_state print_tests(void*, char*) {
     VEC_FOREACH(struct test, test, tests) {
         printf("%s\n", test->name);
     }
-    return false;
+    return CLI_STATE_ERROR;
 }
 
 static const char* color_code(bool success) {

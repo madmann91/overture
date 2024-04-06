@@ -1,7 +1,6 @@
 add_library(overture
     overture/str_pool.c
     overture/log.c
-    overture/cli.c
     overture/mem_pool.c
     overture/graph.c
     overture/test.c)
