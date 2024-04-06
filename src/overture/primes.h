@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <assert.h>
 
 /**
  * @file 
@@ -38,7 +39,21 @@
 
 /// Produces the next prime on the list after the given number. If there is no such prime, this
 /// function returns the given value unchanged.
-[[nodiscard]] size_t next_prime(size_t);
+[[nodiscard]] static inline size_t next_prime(size_t i) {
+#define f(x) if (i <= x) return x;
+    PRIMES(f)
+    return i;
+#undef f
+}
+
 /// Computes the remainder of the division of the given value by the given divisor. If the divisor
 /// is not a prime from the list of primes @ref PRIMES, this function still works, albeit a bit slower.
-[[nodiscard]] size_t mod_prime(size_t, size_t divisor);
+[[nodiscard]] static inline size_t mod_prime(size_t i, size_t p) {
+    assert(p != 0);
+    switch (p) {
+#define f(x) case x: return i % x;
+    PRIMES(f)
+#undef f
+        default: return i % p;
+    }
+}

@@ -1,17 +1,12 @@
 add_library(overture
-    overture/primes.c
     overture/str_pool.c
-    overture/str.c
     overture/log.c
     overture/cli.c
     overture/mem_pool.c
     overture/mem_stream.c
     overture/io.c
-    overture/alloc.c
     overture/graph.c
-    overture/heap.c
-    overture/test.c
-    overture/union_find.c)
+    overture/test.c)
 target_include_directories(overture PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
