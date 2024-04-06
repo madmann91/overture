@@ -4,8 +4,8 @@
 
 # Overture
 
-A small data structures and algorithm library in C. This contains the following algorithms and data
-structures:
+A small data structures and algorithm library in C, mostly header-only. This contains the following
+algorithms and data structures:
 
 - Vector,
 - Span,
