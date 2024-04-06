@@ -15,7 +15,7 @@
 ///
 /// The snippet above creates a test named `my_test` that is automatically registered at startup.
 /// A test driver can choose to enable or disable tests, and can then run the tests simply by
-/// calling `run_tests()`:
+/// calling @ref run_tests:
 ///
 /// ```c
 /// reset_tests(false);
