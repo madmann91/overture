@@ -29,8 +29,10 @@ algorithms and data structures:
 - Simple IO routines,
 - Bit manipulation routines
 
-This library is not intended to be used for public APIs, as there is no attempt at using namespaces
-to protect from name collisions.
+> [!IMPORTANT]
+> This library is not intended to be used for public APIs, as there is no attempt at using namespaces
+> to protect from name collisions. It also uses less portable constructs such as `#pragma once` and
+> requires C23 for function and variable attributes.
 
 ## Building
 
