@@ -9,8 +9,9 @@ target_include_directories(overture PUBLIC
 
 find_package(Threads QUIET)
 if (Threads_FOUND)
-    add_library(overture_threads overture/thread_pool.c)
-    target_link_libraries(overture_threads PUBLIC overture Threads::Threads)
+    add_library(overture_thread_pool overture/thread_pool.c)
+    target_link_libraries(overture_thread_pool PUBLIC overture Threads::Threads)
+    install(TARGETS overture_thread_pool EXPORT overture)
 endif()
 
 add_library(overture_test overture/test.c)
@@ -21,9 +22,7 @@ else()
     message(STATUS "Building tests with process isolation enabled")
 endif()
 
-install(
-    TARGETS overture overture_test
-    EXPORT overture)
+install(TARGETS overture overture_test EXPORT overture)
 
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
