@@ -224,7 +224,7 @@ static inline void print_node(FILE* file, const struct graph_node* node) {
     else if (node->index == GRAPH_SINK_INDEX)
         fprintf(file, "sink");
     else
-        fprintf(file, "%"PRIu64, node->index);
+        fprintf(file, "%zu", node->index);
 }
 
 void graph_print(FILE* file, const struct graph* graph) {
