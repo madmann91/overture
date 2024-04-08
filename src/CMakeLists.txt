@@ -1,11 +1,9 @@
-add_library(overture
-    overture/str_pool.c
-    overture/log.c
-    overture/mem_pool.c
-    overture/graph.c)
-target_include_directories(overture PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+add_library(overture INTERFACE)
+add_library(overture_str_pool overture/str_pool.c)
+add_library(overture_mem_pool overture/mem_pool.c)
+add_library(overture_log overture/log.c)
+add_library(overture_graph overture/graph.c)
+add_library(overture_test overture/test.c)
 
 find_package(Threads QUIET)
 if (Threads_FOUND)
@@ -14,15 +12,30 @@ if (Threads_FOUND)
     install(TARGETS overture_thread_pool EXPORT overture)
 endif()
 
-add_library(overture_test overture/test.c)
-target_link_libraries(overture_test PUBLIC overture)
+target_include_directories(overture INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+
 if (WIN32 OR TEST_DISABLE_FORK)
     target_compile_definitions(overture_test PRIVATE -DTEST_DISABLE_FORK)
 else()
     message(STATUS "Building tests with process isolation enabled")
 endif()
 
-install(TARGETS overture overture_test EXPORT overture)
+target_link_libraries(overture_test PUBLIC overture)
+target_link_libraries(overture_str_pool PUBLIC overture)
+target_link_libraries(overture_mem_pool PUBLIC overture)
+target_link_libraries(overture_log PUBLIC overture)
+target_link_libraries(overture_graph PUBLIC overture)
+
+install(TARGETS
+    overture
+    overture_test
+    overture_str_pool
+    overture_mem_pool
+    overture_log
+    overture_graph
+    EXPORT overture)
 
 install(
     DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/

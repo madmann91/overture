@@ -16,7 +16,12 @@ add_executable(unit_tests
     heap.c)
 
 target_include_directories(unit_tests PRIVATE ../src)
-target_link_libraries(unit_tests PRIVATE overture_test)
+target_link_libraries(unit_tests PRIVATE
+    overture_test
+    overture_graph
+    overture_mem_pool
+    overture_str_pool
+    overture_log)
 
 add_test(NAME unit_tests COMMAND unit_tests)
 add_test(NAME unit_tests_filter COMMAND unit_tests cli set str)
