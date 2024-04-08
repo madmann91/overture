@@ -7,7 +7,7 @@
 A small data structures and algorithm library in C, mostly header-only. This contains the following
 algorithms and data structures:
 
-- Vector,
+- Vector and small vector,
 - Span,
 - Hash set,
 - Hash map,
