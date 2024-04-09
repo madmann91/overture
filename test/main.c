@@ -10,7 +10,7 @@ struct options {
 
 static enum cli_state usage(void*, char*) {
     printf(
-        "usage: testdriver [options] filters ...\n"
+        "usage: unit_tests [options] filters ...\n"
         "options:\n"
         "   -h    --help       Shows this message.\n"
         "         --no-color   Turns of the use of color in the output.\n"

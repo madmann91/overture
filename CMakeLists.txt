@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 project(overture VERSION 0.0.1)
 
 option(TEST_DISABLE_FORK "Disable fork() in the testing framework." OFF)
-option(ENABLE_COVERAGE "Enable coverage target" OFF)
-option(ENABLE_DOXYGEN "Enable doxygen target" ON)
+option(ENABLE_COVERAGE "Enable code coverage build type and target." OFF)
+option(ENABLE_DOXYGEN "Enable code documentation target via Doxygen." ON)
 
 add_compile_options(
     $<$<C_COMPILER_ID:GNU,Clang>:-Wall>
