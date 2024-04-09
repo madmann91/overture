@@ -25,12 +25,15 @@ void work_fn(struct work_item* item, size_t thread_id) {
 TEST(thread_pool) {
     static const size_t count = 20;
     int* data = xmalloc(sizeof(int) * 2 * count);
-    for (size_t i = 0; i < 2 * count; ++i) {
+    for (size_t i = 0; i < 2 * count; ++i)
         data[i] = (int)i;
-    }
 
     static const size_t thread_count = 2;
-    int sums[thread_count] = {};
+
+    int sums[thread_count];
+    for (size_t i = 0; i < thread_count; ++i)
+        sums[i] = 0;
+
     struct my_work_item last_item;
     struct my_work_item first_item;
 
