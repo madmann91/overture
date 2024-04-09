@@ -12,7 +12,9 @@
 /// are stored on the stack when they are small enough, and are moved on the heap when they become
 /// too big.
 
+/// @cond PRIVATE
 #define SMALL_VEC_CAPACITY 4
+/// @endcond
 
 /// Iterates over the elements of a vector or small vector.
 /// @param elem_ty Type of the elements of the vector.
@@ -48,7 +50,7 @@
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_resize(struct name*, size_t); \
     VISIBILITY(vis) void name##_push(struct name*, elem_ty const*); \
-    VISIBILITY(vis) bool name##_is_empty(const struct name*); \
+    [[nodiscard]] VISIBILITY(vis) bool name##_is_empty(const struct name*); \
     VISIBILITY(vis) elem_ty* name##_pop(struct name*); \
     VISIBILITY(vis) elem_ty* name##_last(struct name*); \
     VISIBILITY(vis) void name##_clear(struct name*);
@@ -115,6 +117,7 @@
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_resize(struct name*, size_t); \
     VISIBILITY(vis) void name##_push(struct name*, elem_ty const*); \
+    [[nodiscard]] VISIBILITY(vis) bool name##_is_empty(const struct name*); \
     VISIBILITY(vis) elem_ty* name##_pop(struct name*); \
     VISIBILITY(vis) elem_ty* name##_last(struct name*); \
     VISIBILITY(vis) void name##_clear(struct name*);
@@ -150,6 +153,9 @@
     VISIBILITY(vis) void name##_push(struct name* vec, elem_ty const* elem) { \
         name##_resize(vec, vec->elem_count + 1); \
         vec->elems[vec->elem_count - 1] = *elem; \
+    } \
+    VISIBILITY(vis) bool name##_is_empty(const struct name* vec) { \
+        return vec->elem_count == 0; \
     } \
     VISIBILITY(vis) elem_ty* name##_pop(struct name* vec) { \
         return &vec->elems[--vec->elem_count]; \

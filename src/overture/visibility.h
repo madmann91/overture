@@ -20,5 +20,7 @@
 /// @param vis Visibility of the symbol, which can be either `PUBLIC` or `PRIVATE`.
 #define VISIBILITY(vis) vis##_VISIBILITY
 
+/// @cond PRIVATE
 #define PUBLIC_VISIBILITY
 #define PRIVATE_VISIBILITY static inline
+/// @endcond

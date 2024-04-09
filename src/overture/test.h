@@ -4,8 +4,8 @@
 
 /// @file
 ///
-/// Test framework for C programs. Supports process isolation on POSIX platforms. With this
-/// framework, tests can be written with very little code:
+/// Test framework for C programs. This test framework supports process isolation on POSIX
+/// platforms. With it, very little code is required to write tests:
 ///
 /// ```c
 /// TEST(my_test) {
@@ -44,11 +44,13 @@
             require_success(context); \
     } while (false)
 
+/// @cond PRIVATE
 struct test_context;
+/// @endcond
 
 /// Run all the enabled tests, and then print the result on the standard output. This function can
 /// only be called once.
-/// @return `true` on success, `false` otherwise.
+/// @return `true` if all tests pass, `false` otherwise.
 bool run_tests(bool disable_colors);
 
 /// Filters tests based on the names that appear in the given list of arguments.
@@ -58,14 +60,14 @@ bool run_tests(bool disable_colors);
 /// @param argv Prefixes to use for matching.
 void filter_tests(int argc, char** argv);
 
+/// Cleanup the memory associated with the tests.
+void cleanup_tests(void);
+
 /// Prints available test names, separated by new lines, on the given stream.
-void print_test_names(FILE*);
+void print_tests(FILE*);
 
-/// Internal function called by the framework when a requirement fails. Do not call directly.
+/// @cond PRIVATE
 [[noreturn]] void require_fail(struct test_context*, const char*, const char*, unsigned);
-
-/// Internal function called by the framework when a requirement succeeds. Do not call directly.
 void require_success(struct test_context*);
-
-/// Internal function to register a test. Do not call directly.
 void register_test(const char*, void (*) (struct test_context*));
+/// @endcond

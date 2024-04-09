@@ -47,10 +47,23 @@ struct cli_option {
     enum cli_state (*parse)(void*, char*);
 };
 
-/// Internal command-line parser boolean callback.
+/// @cond PRIVATE
 static inline enum cli_state cli_set_flag(void* data, char*) {
     return *(bool*)data = true, CLI_STATE_ACCEPTED;
 }
+
+static inline enum cli_state cli_set_uint32(void* data, char* arg) {
+    return *(uint32_t*)data = strtoul(arg, NULL, 10), CLI_STATE_ACCEPTED;
+}
+
+static inline enum cli_state cli_set_uint64(void* data, char* arg) {
+    return *(uint64_t*)data = strtoumax(arg, NULL, 10), CLI_STATE_ACCEPTED;
+}
+
+static inline enum cli_state cli_set_string(void* data, char* arg) {
+    return *(char**)data = arg, CLI_STATE_ACCEPTED;
+}
+/// @endcond
 
 /// Produces a boolean flag with no arguments.
 [[nodiscard]] static inline struct cli_option cli_flag(
@@ -64,11 +77,6 @@ static inline enum cli_state cli_set_flag(void* data, char*) {
         .data = data,
         .parse = cli_set_flag
     };
-}
-
-/// Internal command-line parser 32-bit integer callback.
-static inline enum cli_state cli_set_uint32(void* data, char* arg) {
-    return *(uint32_t*)data = strtoul(arg, NULL, 10), CLI_STATE_ACCEPTED;
 }
 
 /// Produces an option that takes a 32-bit unsigned integer as an argument.
@@ -86,11 +94,6 @@ static inline enum cli_state cli_set_uint32(void* data, char* arg) {
     };
 }
 
-/// Internal command-line parser 64-bit integer callback.
-static inline enum cli_state cli_set_uint64(void* data, char* arg) {
-    return *(uint64_t*)data = strtoumax(arg, NULL, 10), CLI_STATE_ACCEPTED;
-}
-
 /// Produces an option that takes a 64-bit unsigned integer as an argument.
 [[nodiscard]] static inline struct cli_option cli_option_uint64(
     const char* short_name,
@@ -104,11 +107,6 @@ static inline enum cli_state cli_set_uint64(void* data, char* arg) {
         .parse = cli_set_uint64,
         .has_value = true
     };
-}
-
-/// Internal command-line parser string callback.
-static inline enum cli_state cli_set_string(void* data, char* arg) {
-    return *(char**)data = arg, CLI_STATE_ACCEPTED;
 }
 
 /// Produces an option that takes a string as an argument.

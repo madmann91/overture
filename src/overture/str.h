@@ -19,13 +19,13 @@
 /// Constructs a string view from the given C string.
 #define STR_VIEW(x) ((struct str_view) { .data = (x), .length = strlen((x)) })
 
-/// View into a character string. May or may not be `NULL`-terminated.
+/// View into a character string. May or may not be zero-terminated.
 struct str_view {
     const char* data;
     size_t length;
 };
 
-/// Dynamically-allocated string. May or may not be `NULL`-terminated.
+/// Dynamically-allocated string. May or may not be zero-terminated.
 struct str {
     char* data;
     size_t length;
@@ -64,6 +64,13 @@ struct str {
     };
 }
 
+[[nodiscard]] static inline struct str_view str_to_view(const struct str* str) {
+    return (struct str_view) {
+        .data = str->data,
+        .length = str->length
+    };
+}
+
 static inline void str_grow(struct str* str, size_t added_bytes) {
     if (str->length + added_bytes > str->capacity) {
         str->capacity += str->capacity >> 1;
@@ -92,7 +99,8 @@ static inline void str_destroy(struct str* str) {
     free(str->data);
 }
 
-/// Makes sure the given string is `NULL`-terminated. Returns a valid C-string that points to it.
+/// Makes sure the given string is zero-terminated. Returns a valid C-string that points to it.
+/// This function can be called several times, and will only append a terminator character once.
 static inline const char* str_terminate(struct str* str) {
     if (str->length == 0 || str->data[str->length - 1] != 0)
         str_push(str, '\0');

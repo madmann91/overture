@@ -11,8 +11,10 @@
 /// Hash set data structure providing fast insertion, search, and removal.
 /// @see hash_table.
 
+/// @cond PRIVATE
 #define SET_DEFAULT_CAPACITY 4
 #define SET_PREFIX set_very_long_prefix_
+/// @endcond
 
 /// Iterates over the elements of a hash set.
 /// @param elem_ty Type of the elements in the hash set.
@@ -47,6 +49,7 @@
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_clear(struct name*); \
     VISIBILITY(vis) bool name##_insert(struct name*, elem_ty const*); \
+    [[nodiscard]] VISIBILITY(vis) bool name##_is_empty(const struct name*); \
     VISIBILITY(vis) elem_ty const* name##_find(const struct name*, elem_ty const*); \
     VISIBILITY(vis) bool name##_remove(struct name*, elem_ty const*);
 
@@ -78,6 +81,9 @@
             return true; \
         } \
         return false; \
+    } \
+    VISIBILITY(vis) bool name##_is_empty(const struct name* set) { \
+        return set->elem_count == 0; \
     } \
     VISIBILITY(vis) elem_ty const* name##_find(const struct name* set, elem_ty const* elem) { \
         size_t idx; \

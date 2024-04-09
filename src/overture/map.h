@@ -11,6 +11,7 @@
 /// Hash map data structure providing fast insertion, search, and removal.
 /// @see hash_table.
 
+/// @cond PRIVATE
 #define MAP_DEFAULT_CAPACITY 4
 #define MAP_PREFIX map_very_long_prefix_
 
@@ -22,6 +23,7 @@
 
 #define MAP_FOREACH_ACCESS(ty, val, elems) \
     for (ty const* val = &((ty const*)(elems))[MAP_PREFIX##i]; MAP_PREFIX##once; MAP_PREFIX##once = false) \
+/// @endcond
 
 /// Iterates over the keys and values of a map.
 /// @param key_ty Type of the keys in the hash map.
@@ -70,6 +72,7 @@
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_clear(struct name*); \
     VISIBILITY(vis) bool name##_insert(struct name*, key_ty const*, val_ty const*); \
+    [[nodiscard]] VISIBILITY(vis) bool name##_is_empty(const struct name*); \
     VISIBILITY(vis) val_ty const* name##_find(const struct name*, key_ty const*); \
     VISIBILITY(vis) bool name##_remove(struct name*, key_ty const*);
 
@@ -101,6 +104,9 @@
             return true; \
         } \
         return false; \
+    } \
+    VISIBILITY(vis) bool name##_is_empty(const struct name* map) { \
+        return map->elem_count == 0; \
     } \
     VISIBILITY(vis) val_ty const* name##_find(const struct name* map, key_ty const* key) { \
         size_t idx; \

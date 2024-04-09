@@ -18,8 +18,8 @@ static enum cli_state usage(void*, char*) {
     return CLI_STATE_ERROR;
 }
 
-static enum cli_state print_tests(void*, char*) {
-    print_test_names(stdout);
+static enum cli_state list_tests(void*, char*) {
+    print_tests(stdout);
     return CLI_STATE_ERROR;
 }
 
@@ -27,12 +27,14 @@ int main(int argc, char** argv) {
     struct options options = { .disable_colors = !is_term(stdout) };
     struct cli_option cli_options[] = {
         { .short_name = "-h", .long_name = "--help", .parse = usage },
-        { .long_name = "--list", .parse = print_tests },
+        { .long_name = "--list", .parse = list_tests },
         cli_flag(NULL, "--no-color", &options.disable_colors),
     };
     if (!cli_parse_options(argc, argv, cli_options, sizeof(cli_options) / sizeof(cli_options[0])))
         return 1;
 
     filter_tests(argc, argv);
-    return run_tests(options.disable_colors) ? 0 : 1;
+    int status = run_tests(options.disable_colors) ? 0 : 1;
+    cleanup_tests();
+    return status;
 }

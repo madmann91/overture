@@ -106,9 +106,12 @@ static bool summarize_tests(bool disable_colors) {
         disable_colors ? "" : color_code(failed == 0),
         passed_tests, enabled_tests, passed_asserts,
         disable_colors ? "" : TERM1(TERM_RESET));
+    return !failed;
+}
+
+void cleanup_tests(void) {
     test_vec_destroy(&tests);
     memset(&tests, 0, sizeof(struct test_vec));
-    return !failed;
 }
 
 static inline void print_failed_assert(
@@ -120,7 +123,7 @@ static inline void print_failed_assert(
     fprintf(stderr, "[%s] Assertion '%s' failed (%s:%u)\n", context->test->name, msg, file, line);
 }
 
-void print_test_names(FILE* file) {
+void print_tests(FILE* file) {
     VEC_FOREACH(struct test, test, tests)
         fprintf(file, "%s\n", test->name);
 }

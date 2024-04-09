@@ -23,8 +23,10 @@ struct hash_table {
     char* vals;         ///< Hash table values. May be `NULL`.
 };
 
+/// @cond PRIVATE
 #define HASH_TABLE_OCCUPIED_FLAG UINT32_C(0x80000000)
 #define HASH_TABLE_MAX_LOAD_FACTOR 70 //%
+/// @endcond
 
 /// Creates a hash table.
 /// @param key_size Size of a key (in bytes)
