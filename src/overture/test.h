@@ -46,7 +46,8 @@
 
 struct test_context;
 
-/// Run all the enabled tests, and then print the result on the standard output.
+/// Run all the enabled tests, and then print the result on the standard output. This function can
+/// only be called once.
 /// @return `true` on success, `false` otherwise.
 bool run_tests(bool disable_colors);
 

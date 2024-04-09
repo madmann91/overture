@@ -106,6 +106,8 @@ static bool summarize_tests(bool disable_colors) {
         disable_colors ? "" : color_code(failed == 0),
         passed_tests, enabled_tests, passed_asserts,
         disable_colors ? "" : TERM1(TERM_RESET));
+    test_vec_destroy(&tests);
+    memset(&tests, 0, sizeof(struct test_vec));
     return !failed;
 }
 
