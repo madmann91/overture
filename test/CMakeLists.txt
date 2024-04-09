@@ -15,6 +15,11 @@ add_executable(unit_tests
     graph.c
     heap.c)
 
+if (TARGET overture_thread_pool)
+    target_sources(unit_tests PRIVATE thread_pool.c)
+    target_link_libraries(unit_tests PRIVATE overture_thread_pool)
+endif()
+
 target_include_directories(unit_tests PRIVATE ../src)
 target_link_libraries(unit_tests PRIVATE
     overture_test
