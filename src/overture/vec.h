@@ -1,6 +1,6 @@
 #pragma once
 
-#include "alloc.h"
+#include "mem.h"
 #include "visibility.h"
 
 #include <string.h>
@@ -142,7 +142,7 @@
                 vec->elems = xrealloc(vec->elems, vec->capacity * sizeof(elem_ty)); \
             } else { \
                 vec->elems = xmalloc(vec->capacity * sizeof(elem_ty)); \
-                memcpy(vec->elems, vec->small_elems, vec->elem_count * sizeof(elem_ty)); \
+                xmemcpy(vec->elems, vec->small_elems, vec->elem_count * sizeof(elem_ty)); \
             } \
         } \
         vec->elem_count = elem_count; \

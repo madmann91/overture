@@ -1,6 +1,6 @@
 #include "str_pool.h"
 #include "mem_pool.h"
-#include "alloc.h"
+#include "mem.h"
 #include "set.h"
 
 #include <string.h>
@@ -35,7 +35,7 @@ const char* str_pool_insert_view(struct str_pool* str_pool, struct str_view str_
         return found->data;
 
     char* data = mem_pool_alloc(&str_pool->mem_pool, str_view.length + 1, 1);
-    memcpy(data, str_view.data, str_view.length);
+    xmemcpy(data, str_view.data, str_view.length);
     data[str_view.length] = 0;
     str_view_set_insert(&str_pool->str_view_set, &(struct str_view) { .data = data, .length = str_view.length });
     return data;

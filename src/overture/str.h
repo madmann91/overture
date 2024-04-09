@@ -1,6 +1,6 @@
 #pragma once
 
-#include "alloc.h"
+#include "mem.h"
 #include "hash.h"
 
 #include <stdio.h>
@@ -56,7 +56,7 @@ struct str {
 
 [[nodiscard]] static inline struct str str_copy(struct str_view view) {
     char* copy = xmalloc(view.length);
-    memcpy(copy, view.data, view.length);
+    xmemcpy(copy, view.data, view.length);
     return (struct str) {
         .data = copy,
         .length = view.length,
@@ -80,7 +80,7 @@ static inline void str_push(struct str* str, char c) {
 
 static inline void str_append(struct str* str, struct str_view view) {
     str_grow(str, view.length);
-    memcpy(str->data + str->length, view.data, view.length);
+    xmemcpy(str->data + str->length, view.data, view.length);
     str->length += view.length;
 }
 

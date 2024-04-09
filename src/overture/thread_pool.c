@@ -6,7 +6,7 @@
 #include <pthread.h>
 
 #include "thread_pool.h"
-#include "alloc.h"
+#include "mem.h"
 
 #define DEFAULT_THREAD_COUNT 2
 

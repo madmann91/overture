@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <string.h>
 
+#include "mem.h"
+
 /// @file
 ///
 /// Bit manipulation functions.
@@ -28,7 +30,7 @@ static_assert(sizeof(uint32_t) == sizeof(float));
 /// bit pattern.
 [[nodiscard]] static inline uint64_t double_to_bits(double x) {
     uint64_t y;
-    memcpy(&y, &x, sizeof(x));
+    xmemcpy(&y, &x, sizeof(x));
     return y;
 }
 
@@ -36,7 +38,7 @@ static_assert(sizeof(uint32_t) == sizeof(float));
 /// bit pattern.
 [[nodiscard]] static inline uint32_t float_to_bits(float x) {
     uint32_t y;
-    memcpy(&y, &x, sizeof(x));
+    xmemcpy(&y, &x, sizeof(x));
     return y;
 }
 
@@ -44,7 +46,7 @@ static_assert(sizeof(uint32_t) == sizeof(float));
 /// bit pattern.
 [[nodiscard]] static inline double bits_to_double(uint64_t x) {
     double y;
-    memcpy(&y, &x, sizeof(x));
+    xmemcpy(&y, &x, sizeof(x));
     return y;
 }
 
@@ -52,6 +54,6 @@ static_assert(sizeof(uint32_t) == sizeof(float));
 /// bit pattern.
 [[nodiscard]] static inline float bits_to_float(uint32_t x) {
     float y;
-    memcpy(&y, &x, sizeof(x));
+    xmemcpy(&y, &x, sizeof(x));
     return y;
 }

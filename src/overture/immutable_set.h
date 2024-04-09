@@ -1,6 +1,6 @@
 #pragma once
 
-#include "alloc.h"
+#include "mem.h"
 #include "set.h"
 
 #include <assert.h>
@@ -80,7 +80,7 @@
     static inline struct name* name##_alloc(elem_ty const* elems, size_t elem_count) { \
         struct name* set = xmalloc(sizeof(struct name) + sizeof(elem_ty) * elem_count); \
         set->elem_count = elem_count; \
-        memcpy(set->elems, elems, sizeof(elem_ty) * elem_count); \
+        xmemcpy(set->elems, elems, sizeof(elem_ty) * elem_count); \
         return set; \
     } \
     SET_IMPL(name##_set, struct name*, name##_hash_wrapper, name##_is_equal, vis) \
@@ -109,7 +109,7 @@
         struct name* set = (struct name*)&small_set; \
         struct name* set_heap = NULL; /* avoid -Wreturn-local-addr */ \
         if (elem_count <= IMMUTABLE_SET_SMALL_CAPACITY) { \
-            memcpy(set->elems, elems, sizeof(elem_ty) * elem_count); \
+            xmemcpy(set->elems, elems, sizeof(elem_ty) * elem_count); \
             set->elem_count = elem_count; \
         } else { \
             set = set_heap = name##_alloc(elems, elem_count); \

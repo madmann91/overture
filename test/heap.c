@@ -1,7 +1,7 @@
 #include <overture/test.h>
 #include <overture/heap.h>
 #include <overture/minstd.h>
-#include <overture/alloc.h>
+#include <overture/mem.h>
 
 #include <stdlib.h>
 

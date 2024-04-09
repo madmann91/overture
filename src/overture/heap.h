@@ -5,6 +5,8 @@
 #include <string.h>
 #include <stdalign.h>
 
+#include "mem.h"
+
 /// @file
 ///
 /// Low-level heap data structure manipulation functions.
@@ -31,10 +33,10 @@ static inline void heap_push(
         const void* parent_elem = heap_at(begin, size, parent);
         if (is_less_than(elem, parent_elem))
             break;
-        memcpy(heap_at(begin, size, i), parent_elem, size);
+        xmemcpy(heap_at(begin, size, i), parent_elem, size);
         i = parent;
     }
-    memcpy(heap_at(begin, size, i), elem, size);
+    xmemcpy(heap_at(begin, size, i), elem, size);
 }
 
 /// Pops an element from a heap.
@@ -55,7 +57,7 @@ static inline void heap_pop(
             largest = left;
         if (right < count && is_less_than(heap_at(begin, size, largest), heap_at(begin, size, right)))
             largest = right;
-        memcpy(heap_at(begin, size, i), heap_at(begin, size, largest), size);
+        xmemcpy(heap_at(begin, size, i), heap_at(begin, size, largest), size);
         if (largest == count - 1)
             break;
         i = largest;
@@ -73,12 +75,12 @@ static inline void heap_sort(
 {
     alignas(max_align_t) char tmp_elem[size];
     for (size_t i = 0; i < count; ++i) {
-        memcpy(tmp_elem, heap_at(begin, size, i), size);
+        xmemcpy(tmp_elem, heap_at(begin, size, i), size);
         heap_push(begin, i, size, tmp_elem, is_less_than);
     }
     for (size_t i = count; i > 0; --i) {
-        memcpy(tmp_elem, begin, size);
+        xmemcpy(tmp_elem, begin, size);
         heap_pop(begin, i, size, is_less_than);
-        memcpy(heap_at(begin, size, i - 1), tmp_elem, size);
+        xmemcpy(heap_at(begin, size, i - 1), tmp_elem, size);
     }
 }

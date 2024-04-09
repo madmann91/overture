@@ -1,5 +1,5 @@
 #include "log.h"
-#include "alloc.h"
+#include "mem.h"
 #include "term.h"
 
 #include <stdarg.h>

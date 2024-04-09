@@ -8,7 +8,7 @@
 #include <assert.h>
 
 #include "primes.h"
-#include "alloc.h"
+#include "mem.h"
 
 /// @file
 ///
@@ -31,6 +31,7 @@ struct hash_table {
 /// @param val_size Size of a value (in bytes)
 /// @param init_capacity Initial capacity (in number of elements)
 [[nodiscard]] static inline struct hash_table hash_table_create(size_t key_size, size_t val_size, size_t init_capacity) {
+    assert(key_size > 0);
     init_capacity = next_prime(init_capacity);
     char* vals = val_size > 0 ? xmalloc(val_size * init_capacity) : NULL;
     return (struct hash_table) {
@@ -86,8 +87,8 @@ static inline void hash_table_rehash(
         while (hash_table_is_bucket_occupied(&copy, idx))
             idx = hash_table_next_bucket(&copy, idx);
         copy.hashes[idx] = hash;
-        memcpy(copy.keys + idx * key_size, hash_table->keys + i * key_size, key_size);
-        memcpy(copy.vals + idx * val_size, hash_table->vals + i * val_size, val_size);
+        xmemcpy(copy.keys + idx * key_size, hash_table->keys + i * key_size, key_size);
+        xmemcpy(copy.vals + idx * val_size, hash_table->vals + i * val_size, val_size);
     }
     hash_table_destroy(hash_table);
     *hash_table = copy;
@@ -125,8 +126,8 @@ static inline bool hash_table_insert(
             return false;
     }
     hash_table->hashes[idx] = hash;
-    memcpy(hash_table->keys + idx * key_size, key, key_size);
-    memcpy(hash_table->vals + idx * val_size, val, val_size);
+    xmemcpy(hash_table->keys + idx * key_size, key, key_size);
+    xmemcpy(hash_table->vals + idx * val_size, val, val_size);
     return true;
 }
 
@@ -174,8 +175,8 @@ static inline bool hash_table_remove(
             (next_idx > idx && (ideal_next_idx <= idx || ideal_next_idx > next_idx)) ||
             (next_idx < idx && (ideal_next_idx <= idx && ideal_next_idx > next_idx)))
         {
-            memcpy(hash_table->keys + idx * key_size, hash_table->keys + next_idx * key_size, key_size);
-            memcpy(hash_table->vals + idx * val_size, hash_table->vals + next_idx * val_size, val_size);
+            xmemcpy(hash_table->keys + idx * key_size, hash_table->keys + next_idx * key_size, key_size);
+            xmemcpy(hash_table->vals + idx * val_size, hash_table->vals + next_idx * val_size, val_size);
             hash_table->hashes[idx] = hash_table->hashes[next_idx];
             idx = next_idx;
         }
