@@ -19,32 +19,32 @@ void work_fn(struct work_item* item, size_t thread_id) {
     for (size_t i = 0; i < my_item->count; ++i) {
         sum += my_item->data[i];
     }
-    my_item->sums[thread_id] = sum;
+    my_item->sums[thread_id] += sum;
 }
 
 TEST(thread_pool) {
-    static const size_t count = 1000;
-    int* my_data = xmalloc(sizeof(int) * 2 * count);
+    static const size_t count = 20;
+    int* data = xmalloc(sizeof(int) * 2 * count);
     for (size_t i = 0; i < 2 * count; ++i) {
-        my_data[i] = (int)i;
+        data[i] = (int)i;
     }
 
     static const size_t thread_count = 2;
-    int sums[thread_count];
+    int sums[thread_count] = {};
     struct my_work_item last_item;
     struct my_work_item first_item;
 
     first_item = (struct my_work_item) {
         .item.work_fn = work_fn,
         .item.next = &last_item.item,
-        .data = my_data,
+        .data = data,
         .count = count,
         .sums = sums
     };
 
     last_item = (struct my_work_item) {
         .item.work_fn = work_fn,
-        .data = my_data + count,
+        .data = data + count,
         .count = count,
         .sums = sums
     };
@@ -57,9 +57,11 @@ TEST(thread_pool) {
     int sum = 0;
     for (size_t i = 0; i < thread_count; ++i)
         sum += sums[i];
+
     int ref = 0;
     for (size_t i = 0; i < 2 * count; ++i)
-        ref += my_data[i];
+        ref += data[i];
+
     REQUIRE(sum == ref);
-    free(my_data);
+    free(data);
 }
