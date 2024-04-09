@@ -30,6 +30,9 @@ target_link_libraries(unit_tests PRIVATE
 
 add_test(NAME unit_tests COMMAND unit_tests)
 add_test(NAME unit_tests_filter COMMAND unit_tests cli set str)
+add_test(NAME unit_tests_list COMMAND unit_tests --list)
+add_test(NAME unit_tests_usage COMMAND unit_tests -h)
+set_tests_properties(unit_tests_usage unit_tests_list PROPERTIES WILL_FAIL TRUE)
 add_custom_target(memcheck
     COMMAND ${CMAKE_CTEST_COMMAND} -T memcheck
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}

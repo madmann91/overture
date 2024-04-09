@@ -109,7 +109,8 @@ static bool summarize_tests(bool disable_colors) {
     return !failed;
 }
 
-void cleanup_tests(void) {
+[[gnu::destructor]]
+static void cleanup_tests(void) {
     test_vec_destroy(&tests);
     memset(&tests, 0, sizeof(struct test_vec));
 }

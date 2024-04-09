@@ -34,7 +34,5 @@ int main(int argc, char** argv) {
         return 1;
 
     filter_tests(argc, argv);
-    int status = run_tests(options.disable_colors) ? 0 : 1;
-    cleanup_tests();
-    return status;
+    return run_tests(options.disable_colors) ? 0 : 1;
 }

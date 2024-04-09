@@ -32,7 +32,7 @@
 /// is disabled by default, use @ref filter_test to enable it based on filters.
 #define TEST(name) \
     void test_##name(struct test_context*); \
-    __attribute__((constructor)) void register_##name() { register_test(#name, test_##name); } \
+    [[gnu::constructor]] void register_##name() { register_test(#name, test_##name); } \
     void test_##name([[maybe_unused]] struct test_context* context)
 
 /// Asserts that the given condition is `true`. Fails the test if it is not the case.
@@ -59,9 +59,6 @@ bool run_tests(bool disable_colors);
 /// @param argc Number of elements in @ref argv.
 /// @param argv Prefixes to use for matching.
 void filter_tests(int argc, char** argv);
-
-/// Cleanup the memory associated with the tests.
-void cleanup_tests(void);
 
 /// Prints available test names, separated by new lines, on the given stream.
 void print_tests(FILE*);
