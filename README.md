@@ -17,6 +17,7 @@ algorithms and data structures:
 - Graph with various traversal algorithms,
 - String pool,
 - Memory pool,
+- Thread pool,
 - Union-find,
 - Heap sort,
 - Minstd0 random generator,
