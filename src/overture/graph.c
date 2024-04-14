@@ -79,14 +79,18 @@ struct graph_node* graph_sink(struct graph* graph, enum graph_dir dir) {
 }
 
 static inline struct graph_node* alloc_graph_node(size_t data_size) {
-    return xcalloc(1, sizeof(struct graph_node) + data_size * sizeof(union graph_node_data));
+    return xcalloc(1, sizeof(struct graph_node) + data_size * sizeof(union graph_user_data));
 }
 
-struct graph graph_create(size_t data_size, void* source_key, void* sink_key) {
+static inline struct graph_edge* alloc_graph_edge(size_t data_size) {
+    return xcalloc(1, sizeof(struct graph_edge) + data_size * sizeof(union graph_user_data));
+}
+
+struct graph graph_create(size_t node_data_size, size_t edge_data_size, void* source_key, void* sink_key) {
     assert((source_key == NULL && sink_key == NULL) || source_key != sink_key);
 
-    struct graph_node* source = alloc_graph_node(data_size);
-    struct graph_node* sink   = alloc_graph_node(data_size);
+    struct graph_node* source = alloc_graph_node(node_data_size);
+    struct graph_node* sink   = alloc_graph_node(node_data_size);
     source->index = GRAPH_SOURCE_INDEX;
     sink->index = GRAPH_SINK_INDEX;
     source->key = source_key;
@@ -102,7 +106,8 @@ struct graph graph_create(size_t data_size, void* source_key, void* sink_key) {
         .source = source,
         .sink = sink,
         .node_count = GRAPH_OTHER_INDEX,
-        .data_size = data_size,
+        .node_data_size = node_data_size,
+        .edge_data_size = edge_data_size,
         .nodes = nodes,
         .edges = graph_edge_set_create()
     };
@@ -135,7 +140,7 @@ struct graph_node* graph_insert(struct graph* graph, void* key) {
     if (node)
         return node;
 
-    node = alloc_graph_node(graph->data_size);
+    node = alloc_graph_node(graph->node_data_size);
     node->index = graph->node_count++;
     node->key = key;
     [[maybe_unused]] bool was_inserted = graph_node_key_map_insert(&graph->nodes, &key, &node);
@@ -156,7 +161,7 @@ struct graph_edge* graph_connect(
     if (edge_ptr)
         return *edge_ptr;
 
-    edge = xmalloc(sizeof(struct graph_edge));
+    edge = alloc_graph_edge(graph->edge_data_size);
     edge->from = from;
     edge->to = to;
     edge->next_in = to->ins;
@@ -165,6 +170,22 @@ struct graph_edge* graph_connect(
     [[maybe_unused]] bool was_inserted = graph_edge_set_insert(&graph->edges, &edge);
     assert(was_inserted);
     return edge;
+}
+
+bool graph_disconnect(
+    struct graph* graph,
+    struct graph_node* from,
+    struct graph_node* to)
+{
+    struct graph_edge* edge = &(struct graph_edge) { .from = from, .to = to };
+    struct graph_edge* const* edge_ptr = graph_edge_set_find(&graph->edges, &edge);
+    if (!edge_ptr)
+        return false;
+
+    edge = *edge_ptr;
+    graph_edge_set_remove(&graph->edges, &edge);
+    free(edge);
+    return true;
 }
 
 struct graph_node_vec graph_compute_post_order(struct graph* graph, enum graph_dir dir) {

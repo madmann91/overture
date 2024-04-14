@@ -4,7 +4,7 @@
 
 TEST(graph) {
     int array[3] = {};
-    struct graph graph = graph_create(1, &array[0], &array[1]);
+    struct graph graph = graph_create(1, 0, &array[0], &array[1]);
     graph_connect(&graph,
         graph_insert(&graph, &array[0]),
         graph_insert(&graph, &array[2]));
