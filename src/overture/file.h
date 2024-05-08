@@ -6,11 +6,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#ifdef _WIN32
-#include <io.h>
-#define isatty _isatty
-#define fileno _fileno
-#else
+#ifndef _WIN32
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
@@ -22,7 +18,7 @@
 /// Reads the contents of a file into memory.
 /// @param file_name Name of the file on disk.
 /// @param size On return, contains the size of the resulting buffer, excluding the `NULL` terminator. May be `NULL`.
-/// @return A `NULL`-terminated buffer that must be freed using `free()` by the caller.
+/// @return A `NULL`-terminated buffer with the contents of the file. Must be freed using `free()` by the caller.
 [[nodiscard]] static inline char* file_read(const char* file_name, size_t* total_size) {
     FILE* file = fopen(file_name, "rb");
     if (!file)
