@@ -11,7 +11,8 @@ TEST(log) {
     struct log log = {
         .file = mem_stream.file,
         .disable_colors = true,
-        .max_errors = 3,
+        .max_warns = 1,
+        .max_errors = 2,
         .source_name = "stdin",
         .source_data = STR_VIEW("abcd\nefgh\n")
     };

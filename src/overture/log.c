@@ -81,16 +81,17 @@ void log_msg(
     const char* fmt,
     va_list args)
 {
-    if (tag == MSG_ERR) {
-        log->error_count++;
-        if (log->error_count >= log->max_errors)
-            return;
-    }
+    if ((tag == MSG_ERR && log->error_count >= log->max_errors) ||
+        (tag == MSG_WARN && log->warn_count >= log->max_warns))
+        return;
+
+    log->error_count += tag == MSG_ERR ? 1 : 0;
+    log->warn_count  += tag == MSG_WARN ? 1 : 0;
 
     if (!log->file)
         return;
 
-    if (tag != MSG_NOTE && log->error_count > 1)
+    if (tag != MSG_NOTE && (log->error_count + log->warn_count) > 1)
         fprintf(log->file, "\n");
 
     switch (tag) {

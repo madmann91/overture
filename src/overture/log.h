@@ -35,7 +35,9 @@ struct log {
     FILE* file;                     ///< Stream where messages are shown.
     bool disable_colors;            ///< Flag controlling whether colors are enabled or not.
     size_t max_errors;              ///< Maximum number of errors before the log stops displaying them.
+    size_t max_warns;               ///< Maximum number of warnings before the log stops displaying them.
     size_t error_count;             ///< Current number of errors.
+    size_t warn_count;              ///< Current number of warnings.
     const char* source_name;        ///< Source file name.
     struct str_view source_data;    ///< Source file data (for diagnostics).
 };
