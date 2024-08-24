@@ -22,5 +22,5 @@
 
 /// @cond PRIVATE
 #define PUBLIC_VISIBILITY
-#define PRIVATE_VISIBILITY static inline
+#define PRIVATE_VISIBILITY [[maybe_unused]] static inline
 /// @endcond
