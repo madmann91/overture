@@ -13,7 +13,7 @@
 /// too big.
 
 /// @cond PRIVATE
-#define SMALL_VEC_CAPACITY 4
+#define SMALL_VEC_CAPACITY 8
 /// @endcond
 
 /// Iterates over the elements of a vector or small vector.
