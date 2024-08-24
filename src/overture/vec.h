@@ -113,6 +113,9 @@
         size_t capacity; \
         size_t elem_count; \
     }; \
+    VISIBILITY(vis) struct name name##_create_with_capacity(size_t); \
+    VISIBILITY(vis) struct name name##_create(void); \
+    VISIBILITY(vis) void name##_relocate(struct name*); \
     VISIBILITY(vis) void name##_init(struct name*); \
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_resize(struct name*, size_t); \
@@ -125,10 +128,26 @@
 /// Implements a small vector data structure.
 /// @see SMALL_VEC_DEFINE.
 #define SMALL_VEC_IMPL(name, elem_ty, vis) \
+    VISIBILITY(vis) struct name name##_create_with_capacity(size_t capacity) { \
+        if (capacity <= SMALL_VEC_CAPACITY) \
+            capacity = SMALL_VEC_CAPACITY; \
+        elem_ty* elems = capacity <= SMALL_VEC_CAPACITY ? NULL : xmalloc(capacity * sizeof(elem_ty)); \
+        return (struct name) { \
+            .elems = elems, \
+            .elem_count = 0, \
+            .capacity = capacity \
+        }; \
+    } \
+    VISIBILITY(vis) struct name name##_create(void) { \
+        return name##_create_with_capacity(SMALL_VEC_CAPACITY); \
+    } \
+    VISIBILITY(vis) void name##_relocate(struct name* vec) { \
+        if (vec->capacity <= SMALL_VEC_CAPACITY) \
+            vec->elems = vec->small_elems; \
+    } \
     VISIBILITY(vis) void name##_init(struct name* vec) { \
-        vec->elem_count = 0; \
-        vec->elems = vec->small_elems; \
-        vec->capacity = SMALL_VEC_CAPACITY; \
+        *vec = name##_create(); \
+        name##_relocate(vec); \
     } \
     VISIBILITY(vis) void name##_destroy(struct name* vec) { \
         if (vec->capacity > SMALL_VEC_CAPACITY) \
