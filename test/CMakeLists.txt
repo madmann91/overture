@@ -22,6 +22,7 @@ endif()
 
 target_include_directories(unit_tests PRIVATE ../src)
 target_link_libraries(unit_tests PRIVATE
+    overture_file
     overture_test
     overture_graph
     overture_mem_pool

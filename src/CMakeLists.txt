@@ -4,6 +4,7 @@ add_library(overture_mem_pool overture/mem_pool.c)
 add_library(overture_log overture/log.c)
 add_library(overture_graph overture/graph.c)
 add_library(overture_test overture/test.c)
+add_library(overture_file overture/file.c)
 
 find_package(Threads QUIET)
 if (Threads_FOUND)
@@ -27,6 +28,7 @@ target_link_libraries(overture_str_pool PUBLIC overture)
 target_link_libraries(overture_mem_pool PUBLIC overture)
 target_link_libraries(overture_log PUBLIC overture)
 target_link_libraries(overture_graph PUBLIC overture)
+target_link_libraries(overture_file PUBLIC overture)
 
 install(TARGETS
     overture
@@ -35,6 +37,7 @@ install(TARGETS
     overture_mem_pool
     overture_log
     overture_graph
+    overture_file
     EXPORT overture)
 
 install(
