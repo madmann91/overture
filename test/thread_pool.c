@@ -13,7 +13,7 @@ struct my_work_item {
     int* sums;
 };
 
-void work_fn(struct work_item* item, size_t thread_id) {
+void work_func(struct work_item* item, size_t thread_id) {
     struct my_work_item* my_item = (struct my_work_item*)item;
     int sum = 0;
     for (size_t i = 0; i < my_item->count; ++i) {
@@ -38,7 +38,7 @@ TEST(thread_pool) {
     struct my_work_item first_item;
 
     first_item = (struct my_work_item) {
-        .item.work_fn = work_fn,
+        .item.work_func = work_func,
         .item.next = &last_item.item,
         .data = data,
         .count = count,
@@ -46,7 +46,7 @@ TEST(thread_pool) {
     };
 
     last_item = (struct my_work_item) {
-        .item.work_fn = work_fn,
+        .item.work_func = work_func,
         .data = data + count,
         .count = count,
         .sums = sums

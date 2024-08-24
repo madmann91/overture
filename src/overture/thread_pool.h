@@ -11,7 +11,7 @@
 struct work_item {
     /// Pointer to the function that is run by the thread pool. It takes a pointer to the work
     /// item, and the index of the thread that runs the function in the thread pool as arguments.
-    void (*work_fn)(struct work_item*, size_t);
+    void (*work_func)(struct work_item*, size_t);
     /// Pointer to the next item (if any, otherwise `NULL`).
     struct work_item* next;
 };

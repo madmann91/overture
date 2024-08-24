@@ -79,7 +79,7 @@ static void* thread_pool_worker(void* data) {
         queue->worked_on++;
         pthread_mutex_unlock(&queue->mutex);
 
-        item->work_fn(item, thread_id);
+        item->work_func(item, thread_id);
 
         pthread_mutex_lock(&queue->mutex);
         item->next = queue->done_items;
