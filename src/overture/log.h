@@ -48,7 +48,7 @@ struct log {
 
     /// Callback to use when printing diagnostics on the starting row of a given source file
     /// location. Returns the number of characters written on the left of, and inside the first row
-    /// of the file location.
+    /// of the file location. When `NULL`, diagnostics are turned off.
     struct line_size (*print_line)(struct log*, const struct file_loc* loc);
 };
 
