@@ -6,11 +6,37 @@
 #include <stdlib.h>
 #include <inttypes.h>
 
-#define ERROR_STYLE TERM2(TERM_FG_RED, TERM_BOLD)
-#define WARN_STYLE  TERM2(TERM_FG_YELLOW, TERM_BOLD)
-#define NOTE_STYLE TERM2(TERM_FG_CYAN, TERM_BOLD)
-#define RANGE_STYLE TERM2(TERM_FG_WHITE, TERM_BOLD)
-#define WITH_STYLE(x, y) (log->disable_colors ? (y) : x y TERM1(TERM_RESET))
+struct styles {
+    const char* msg;
+    const char* range;
+    const char* reset;
+};
+
+struct line_size log_print_line(struct log* log, const struct file_loc* loc) {
+    struct line_size line_size = {};
+    FILE* file = fopen(loc->file_name, "rb");
+    if (!file)
+        return line_size;
+
+    fseek(file, loc->begin.bytes + 1 - loc->begin.col, SEEK_SET);
+    for (size_t col = 1;; ++col) {
+        int c = fgetc(file);
+        if (c == EOF || c == '\n')
+            break;
+        size_t char_count = 0;
+        if (c == '\t')
+            fputs("    ", log->file), char_count = 4;
+        else
+            fputc(c, log->file), char_count = 1;
+        bool is_left   = col < loc->begin.col;
+        bool is_inside = !is_left && (loc->begin.row < loc->end.row || col < loc->end.col);
+        line_size.left   += is_left   ? char_count : 0;
+        line_size.inside += is_inside ? char_count : 0;
+    }
+
+    fclose(file);
+    return line_size;
+}
 
 static inline int count_digits(uint32_t i) {
     int count = 1;
@@ -19,65 +45,40 @@ static inline int count_digits(uint32_t i) {
     return count;
 }
 
-static inline struct str_view line_at(
-    const struct str_view* source_data,
-    const struct source_pos* pos)
-{
-    size_t begin = pos->bytes;
-    while (begin > 0 && source_data->data[begin - 1] != '\n')
-        begin--;
-    size_t end = pos->bytes;
-    while (end < source_data->length && source_data->data[end] != '\n')
-        end++;
-    return (struct str_view) { .data = source_data->data + begin, .length = end - begin };
-}
-
 static inline void print_diagnostic(
-    enum msg_tag tag,
     struct log* log,
-    const struct source_range* source_range)
+    const struct file_loc* loc,
+    const struct styles* styles)
 {
-    const char* style = "";
-    const char* reset_style = "";
-    if (!log->disable_colors) {
-        reset_style = TERM1(TERM_RESET);
-        switch (tag) {
-            case MSG_ERR:  style = ERROR_STYLE; break;
-            case MSG_WARN: style = WARN_STYLE;  break;
-            case MSG_NOTE: style = NOTE_STYLE;  break;
-        }
-    }
+    int indent_size = count_digits(loc->end.row);
 
-    int indent_size = count_digits(source_range->end.row);
+    fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
+    fprintf(log->file, "%s|%s\n", styles->msg, styles->reset);
 
-    fprintf(log->file, WITH_STYLE(RANGE_STYLE, " %*s "), indent_size, " ");
-    fprintf(log->file, "%s|%s", style, reset_style);
-    fprintf(log->file, "\n");
+    fprintf(log->file, " %s%*"PRIu32"%s ", styles->range, indent_size, loc->begin.row, styles->reset);
+    fprintf(log->file, "%s|%s", styles->msg, styles->reset);
+    struct line_size line_size = log->print_line(log, loc);
+    fputs("\n", log->file);
 
-    fprintf(log->file, WITH_STYLE(RANGE_STYLE, " %*"PRIu32" "), indent_size, source_range->begin.row);
-    fprintf(log->file, "%s|%s", style, reset_style);
-    struct str_view begin_line = line_at(&log->source_data, &source_range->begin);
-    fprintf(log->file, "%.*s", (int)begin_line.length, begin_line.data);
-    fprintf(log->file, "\n");
-
-    fprintf(log->file, WITH_STYLE(RANGE_STYLE, " %*s "), indent_size, " ");
-    fprintf(log->file, "%s|%s", style, reset_style);
-    fprintf(log->file, "%*s", (int)source_range->begin.col - 1, "");
-    fputs(style, log->file);
-    if (source_range->begin.row == source_range->end.row) {
-        for (uint32_t i = source_range->begin.col; i < source_range->end.col; ++i)
-            fprintf(log->file, "^");
+    fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
+    fprintf(log->file, "%s|%s%*s", styles->msg, styles->reset, (int)line_size.left, "");
+    fputs(styles->msg, log->file);
+    if (loc->begin.row == loc->end.row) {
+        for (size_t i = 0; i < line_size.inside; ++i)
+            fputc('^', log->file);
     } else {
-        fprintf(log->file, "^...");
+        fputc('^', log->file);
+        for (size_t i = 1; i < line_size.inside; ++i)
+            fputc('.', log->file);
     }
-    fputs(reset_style, log->file);
-    fprintf(log->file, "\n");
+    fputs(styles->reset, log->file);
+    fputc('\n', log->file);
 }
 
 void log_msg(
     enum msg_tag tag,
     struct log* log,
-    const struct source_range* source_range,
+    const struct file_loc* loc,
     const char* fmt,
     va_list args)
 {
@@ -94,47 +95,60 @@ void log_msg(
     if (tag != MSG_NOTE && (log->error_count + log->warn_count) > 1)
         fprintf(log->file, "\n");
 
-    switch (tag) {
-        case MSG_ERR:  fprintf(log->file, WITH_STYLE(ERROR_STYLE, "error:"  )); break;
-        case MSG_WARN: fprintf(log->file, WITH_STYLE(WARN_STYLE,  "warning:")); break;
-        case MSG_NOTE: fprintf(log->file, WITH_STYLE(NOTE_STYLE,  "note:"   )); break;
-    }
+    static const char* msg_styles[] = {
+        [MSG_ERR ] = TERM2(TERM_FG_RED, TERM_BOLD),
+        [MSG_WARN] = TERM2(TERM_FG_YELLOW, TERM_BOLD),
+        [MSG_NOTE] = TERM2(TERM_FG_CYAN, TERM_BOLD)
+    };
+    static const char* msg_header[] = {
+        [MSG_ERR]  = "error",
+        [MSG_WARN] = "warning",
+        [MSG_NOTE] = "note"
+    };
 
-    fprintf(log->file, " ");
+    struct styles styles = {
+        .msg   = log->disable_colors ? "" : msg_styles[tag],
+        .range = log->disable_colors ? "" : TERM2(TERM_FG_WHITE, TERM_BOLD),
+        .reset = log->disable_colors ? "" : TERM1(TERM_RESET)
+    };
+
+    fprintf(log->file, "%s%s%s: ", styles.msg, msg_header[tag], styles.reset);
     vfprintf(log->file, fmt, args);
     fprintf(log->file, "\n");
 
-    if (source_range && log->source_name) {
+    if (loc && loc->file_name) {
         fprintf(log->file, "  in ");
-        fprintf(log->file, WITH_STYLE(RANGE_STYLE, "%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")\n"),
-            log->source_name,
-            source_range->begin.row,
-            source_range->begin.col,
-            source_range->end.row,
-            source_range->end.col);
+        fprintf(log->file, "%s%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
+            styles.range,
+            loc->file_name,
+            loc->begin.row,
+            loc->begin.col,
+            loc->end.row,
+            loc->end.col,
+            styles.reset);
 
-        if (log->source_data.length > 0)
-            print_diagnostic(tag, log, source_range);
+        if (log->print_line)
+            print_diagnostic(log, loc, &styles);
     }
 }
 
-void log_error(struct log* log, const struct source_range* source_range, const char* fmt, ...) {
+void log_error(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_ERR, log, source_range, fmt, args);
+    log_msg(MSG_ERR, log, loc, fmt, args);
     va_end(args);
 }
 
-void log_warn(struct log* log, const struct source_range* source_range, const char* fmt, ...) {
+void log_warn(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_WARN, log, source_range, fmt, args);
+    log_msg(MSG_WARN, log, loc, fmt, args);
     va_end(args);
 }
 
-void log_note(struct log* log, const struct source_range* source_range, const char* fmt, ...) {
+void log_note(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_NOTE, log, source_range, fmt, args);
+    log_msg(MSG_NOTE, log, loc, fmt, args);
     va_end(args);
 }
