@@ -1,10 +1,12 @@
 #include <overture/test.h>
 #include <overture/str_pool.h>
+#include <overture/mem_pool.h>
 
 #include <stdio.h>
 
 TEST(str_pool) {
-    struct str_pool* str_pool = str_pool_create();
+    struct mem_pool mem_pool = mem_pool_create();
+    struct str_pool* str_pool = str_pool_create(&mem_pool);
     REQUIRE(str_pool_insert(str_pool, "foo") == str_pool_insert(str_pool, "foo"));
     REQUIRE(str_pool_insert(str_pool, "bar") != str_pool_insert(str_pool, "foo"));
     const char* numbers[10] = {
@@ -25,4 +27,5 @@ TEST(str_pool) {
         REQUIRE(str_pool_insert_view(str_pool, (struct str_view) { .data = buf, .length = 1 }) == numbers[i]);
     }
     str_pool_destroy(str_pool);
+    mem_pool_destroy(&mem_pool);
 }

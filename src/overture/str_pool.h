@@ -9,9 +9,10 @@
 /// pointer.
 
 struct str_pool;
+struct mem_pool;
 
 /// Creates an empty string pool.
-[[nodiscard]] struct str_pool* str_pool_create(void);
+[[nodiscard]] struct str_pool* str_pool_create(struct mem_pool*);
 
 /// Destroys a string pool.
 void str_pool_destroy(struct str_pool*);

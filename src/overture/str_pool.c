@@ -8,19 +8,18 @@
 SET_DEFINE(str_view_set, struct str_view, str_view_hash, str_view_is_equal, PRIVATE)
 
 struct str_pool {
-    struct mem_pool mem_pool;
+    struct mem_pool* mem_pool;
     struct str_view_set str_view_set;
 };
 
-struct str_pool* str_pool_create(void) {
+struct str_pool* str_pool_create(struct mem_pool* mem_pool) {
     struct str_pool* str_pool = xmalloc(sizeof(struct str_pool));
-    str_pool->mem_pool = mem_pool_create();
+    str_pool->mem_pool = mem_pool;
     str_pool->str_view_set = str_view_set_create();
     return str_pool;
 }
 
 void str_pool_destroy(struct str_pool* str_pool) {
-    mem_pool_destroy(&str_pool->mem_pool);
     str_view_set_destroy(&str_pool->str_view_set);
     free(str_pool);
 }
@@ -34,7 +33,7 @@ const char* str_pool_insert_view(struct str_pool* str_pool, struct str_view str_
     if (found)
         return found->data;
 
-    char* data = mem_pool_alloc(&str_pool->mem_pool, str_view.length + 1, 1);
+    char* data = mem_pool_alloc(str_pool->mem_pool, str_view.length + 1, 1);
     xmemcpy(data, str_view.data, str_view.length);
     data[str_view.length] = 0;
     str_view_set_insert(&str_pool->str_view_set, &(struct str_view) { .data = data, .length = str_view.length });

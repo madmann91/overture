@@ -24,7 +24,7 @@ else()
 endif()
 
 target_link_libraries(overture_test PUBLIC overture)
-target_link_libraries(overture_str_pool PUBLIC overture)
+target_link_libraries(overture_str_pool PUBLIC overture overture_mem_pool)
 target_link_libraries(overture_mem_pool PUBLIC overture)
 target_link_libraries(overture_log PUBLIC overture)
 target_link_libraries(overture_graph PUBLIC overture)
