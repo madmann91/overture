@@ -89,8 +89,9 @@ static inline void hash_table_rehash(
         while (hash_table_is_bucket_occupied(&copy, idx))
             idx = hash_table_next_bucket(&copy, idx);
         copy.hashes[idx] = hash;
-        xmemcpy(copy.keys + idx * key_size, hash_table->keys + i * key_size, key_size);
-        xmemcpy(copy.vals + idx * val_size, hash_table->vals + i * val_size, val_size);
+        memcpy(copy.keys + idx * key_size, hash_table->keys + i * key_size, key_size);
+        if (val_size != 0)
+            memcpy(copy.vals + idx * val_size, hash_table->vals + i * val_size, val_size);
     }
     hash_table_destroy(hash_table);
     *hash_table = copy;
@@ -128,8 +129,9 @@ static inline bool hash_table_insert(
             return false;
     }
     hash_table->hashes[idx] = hash;
-    xmemcpy(hash_table->keys + idx * key_size, key, key_size);
-    xmemcpy(hash_table->vals + idx * val_size, val, val_size);
+    memcpy(hash_table->keys + idx * key_size, key, key_size);
+    if (val_size != 0)
+        memcpy(hash_table->vals + idx * val_size, val, val_size);
     return true;
 }
 
