@@ -82,8 +82,7 @@ void log_msg(
     const char* fmt,
     va_list args)
 {
-    if ((tag == MSG_ERR && log->error_count >= log->max_errors) ||
-        (tag == MSG_WARN && log->warn_count >= log->max_warns))
+    if (log->error_count >= log->max_errors || log->warn_count >= log->max_warns)
         return;
 
     log->error_count += tag == MSG_ERR ? 1 : 0;
