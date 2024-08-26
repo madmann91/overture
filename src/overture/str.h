@@ -87,7 +87,8 @@ static inline void str_push(struct str* str, char c) {
 
 static inline void str_append(struct str* str, struct str_view view) {
     str_grow(str, view.length);
-    xmemcpy(str->data + str->length, view.data, view.length);
+    if (view.length > 0)
+        memcpy(str->data + str->length, view.data, view.length);
     str->length += view.length;
 }
 
