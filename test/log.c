@@ -56,8 +56,12 @@ TEST(log) {
     log_warn(log, &(struct file_loc) { .file_name = file_name, .begin = begin, .end = end },  "%d", 3);
     log_note(log, NULL, "%d", 4);
     log_error(log, &(struct file_loc) { .file_name = file_name, .begin = begin, .end = end },  "%d", 5);
+    log_note(log, NULL, "%d", 6);
 
     mem_stream_destroy(&mem_stream);
+
+    REQUIRE(log->error_count == 3);
+    REQUIRE(log->warn_count == 1);
 
     static const char* result =
         "error: 1\n"

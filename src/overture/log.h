@@ -13,7 +13,7 @@
 
 /// Message type.
 enum msg_tag {
-    MSG_ERR,    ///< Error message.
+    MSG_ERROR,  ///< Error message.
     MSG_WARN,   ///< Warning message.
     MSG_NOTE    ///< Note attached to either a warning or error message.
 };

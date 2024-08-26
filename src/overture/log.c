@@ -82,11 +82,11 @@ void log_msg(
     const char* fmt,
     va_list args)
 {
-    if (log->error_count >= log->max_errors || log->warn_count >= log->max_warns)
-        return;
-
-    log->error_count += tag == MSG_ERR ? 1 : 0;
+    log->error_count += tag == MSG_ERROR ? 1 : 0;
     log->warn_count  += tag == MSG_WARN ? 1 : 0;
+
+    if (log->error_count > log->max_errors || log->warn_count > log->max_warns)
+        return;
 
     if (!log->file)
         return;
@@ -95,14 +95,14 @@ void log_msg(
         fprintf(log->file, "\n");
 
     static const char* msg_styles[] = {
-        [MSG_ERR ] = TERM2(TERM_FG_RED, TERM_BOLD),
-        [MSG_WARN] = TERM2(TERM_FG_YELLOW, TERM_BOLD),
-        [MSG_NOTE] = TERM2(TERM_FG_CYAN, TERM_BOLD)
+        [MSG_ERROR] = TERM2(TERM_FG_RED, TERM_BOLD),
+        [MSG_WARN ] = TERM2(TERM_FG_YELLOW, TERM_BOLD),
+        [MSG_NOTE ] = TERM2(TERM_FG_CYAN, TERM_BOLD)
     };
     static const char* msg_header[] = {
-        [MSG_ERR]  = "error",
-        [MSG_WARN] = "warning",
-        [MSG_NOTE] = "note"
+        [MSG_ERROR] = "error",
+        [MSG_WARN ] = "warning",
+        [MSG_NOTE ] = "note"
     };
 
     struct styles styles = {
@@ -134,7 +134,7 @@ void log_msg(
 void log_error(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_ERR, log, loc, fmt, args);
+    log_msg(MSG_ERROR, log, loc, fmt, args);
     va_end(args);
 }
 
