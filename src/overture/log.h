@@ -63,12 +63,21 @@ struct line_size log_print_line(struct log* log, const struct file_loc* loc);
 ///   case no diagnostic is printed, and the source file name is not displayed in the output.
 /// @param fmt Formatting string, following the syntax of `printf`.
 /// @param args Argument list.
-void log_msg(
+void log_msg_from_args(
     enum msg_tag msg_tag,
     struct log* log,
     const struct file_loc* loc,
     const char* fmt,
     va_list args);
+
+/// Prints a log message.
+/// @see log_msg_from_args.
+[[gnu::format(printf, 4, 5)]]
+void log_msg(
+    enum msg_tag msg_tag,
+    struct log* log,
+    const struct file_loc* loc,
+    const char* fmt, ...);
 
 /// Prints an error message.
 /// @see log_msg.

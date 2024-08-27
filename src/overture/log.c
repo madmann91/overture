@@ -75,7 +75,7 @@ static inline void print_diagnostic(
     fputc('\n', log->file);
 }
 
-void log_msg(
+void log_msg_from_args(
     enum msg_tag tag,
     struct log* log,
     const struct file_loc* loc,
@@ -131,23 +131,30 @@ void log_msg(
     }
 }
 
+void log_msg(enum msg_tag tag, struct log* log, const struct file_loc* loc, const char* fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+    log_msg_from_args(tag, log, loc, fmt, args);
+    va_end(args);
+}
+
 void log_error(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_ERROR, log, loc, fmt, args);
+    log_msg_from_args(MSG_ERROR, log, loc, fmt, args);
     va_end(args);
 }
 
 void log_warn(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_WARN, log, loc, fmt, args);
+    log_msg_from_args(MSG_WARN, log, loc, fmt, args);
     va_end(args);
 }
 
 void log_note(struct log* log, const struct file_loc* loc, const char* fmt, ...) {
     va_list args;
     va_start(args, fmt);
-    log_msg(MSG_NOTE, log, loc, fmt, args);
+    log_msg_from_args(MSG_NOTE, log, loc, fmt, args);
     va_end(args);
 }
