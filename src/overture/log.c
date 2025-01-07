@@ -99,6 +99,7 @@ void log_msg_from_args(
         [MSG_WARN ] = TERM2(TERM_FG_YELLOW, TERM_BOLD),
         [MSG_NOTE ] = TERM2(TERM_FG_CYAN, TERM_BOLD)
     };
+
     static const char* msg_header[] = {
         [MSG_ERROR] = "error",
         [MSG_WARN ] = "warning",

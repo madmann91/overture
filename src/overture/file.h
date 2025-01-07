@@ -11,7 +11,7 @@
 /// Reads the contents of a file into memory.
 /// @param file_name Name of the file on disk.
 /// @param size On return, contains the size of the resulting buffer, excluding the `NULL` terminator. May be `NULL`.
-/// @return A `NULL`-terminated buffer with the contents of the file. Must be freed using `free()` by the caller.
+/// @return A `NULL`-terminated buffer with the contents of the file, or `NULL` if reading fails. Must be freed using `free()` by the caller.
 [[nodiscard]] char* file_read(const char* file_name, size_t* total_size);
 
 /// @return `true` if the given file exists, otherwise `false`.
