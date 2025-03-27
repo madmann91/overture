@@ -22,7 +22,7 @@
                 __VA_ARGS__
 
 #define MAP_FOREACH_ACCESS(ty, val, elems) \
-    for (ty const* val = &((ty const*)(elems))[MAP_PREFIX##i]; MAP_PREFIX##once; MAP_PREFIX##once = false) \
+    for (ty* val = &((ty*)(elems))[MAP_PREFIX##i]; MAP_PREFIX##once; MAP_PREFIX##once = false) \
 /// @endcond
 
 /// Iterates over the keys and values of a map.
@@ -33,14 +33,14 @@
 /// @param map Expression evaluating to a hash map.
 #define MAP_FOREACH(key_ty, key, val_ty, val, map) \
     MAP_FOREACH_COMMON(map, \
-        MAP_FOREACH_ACCESS(key_ty, key, (map).hash_table.keys) \
+        MAP_FOREACH_ACCESS(key_ty const, key, (map).hash_table.keys) \
         MAP_FOREACH_ACCESS(val_ty, val, (map).hash_table.vals))
 
 /// Iterates over the keys of a map.
 /// @see MAP_FOREACH.
 #define MAP_FOREACH_KEY(key_ty, key, map) \
     MAP_FOREACH_COMMON(map, \
-        MAP_FOREACH_ACCESS(key_ty, key, (map).hash_table.keys)) \
+        MAP_FOREACH_ACCESS(key_ty const, key, (map).hash_table.keys)) \
 
 /// Iterates over the values of a map.
 /// @see MAP_FOREACH.
