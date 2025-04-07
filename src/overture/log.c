@@ -12,6 +12,14 @@ struct styles {
     const char* reset;
 };
 
+struct str_view file_loc_view(const struct file_loc* loc, const char* file_data) {
+    assert(file_data || loc->end.bytes == loc->begin.bytes);
+    return (struct str_view) {
+        .data = file_data + loc->begin.bytes,
+        .length = loc->end.bytes - loc->begin.bytes
+    };
+}
+
 struct line_size log_print_line(struct log* log, const struct file_loc* loc) {
     struct line_size line_size = {};
     FILE* file = fopen(loc->file_name, "rb");

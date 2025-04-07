@@ -52,6 +52,9 @@ struct log {
     struct line_size (*print_line)(struct log*, const struct file_loc* loc);
 };
 
+/// Returns a view for the given file location, given an array of bytes with the file contents.
+struct str_view file_loc_view(const struct file_loc*, const char* file_data);
+
 /// Default implementation for `print_line`. This implementation opens the file mentioned in the
 /// source file location on disk, and prints a line from it.
 struct line_size log_print_line(struct log* log, const struct file_loc* loc);
