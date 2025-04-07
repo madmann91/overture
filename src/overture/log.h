@@ -39,12 +39,13 @@ struct line_size {
 
 /// User-facing application log containing error and warning messages.
 struct log {
-    FILE* file;          ///< Stream where messages are shown.
-    bool disable_colors; ///< Flag controlling whether colors are enabled or not.
-    size_t max_errors;   ///< Maximum number of errors before the log stops displaying them.
-    size_t max_warns;    ///< Maximum number of warnings before the log stops displaying them.
-    size_t error_count;  ///< Current number of errors.
-    size_t warn_count;   ///< Current number of warnings.
+    FILE* file;           ///< Stream where messages are shown.
+    bool disable_colors;  ///< Flag controlling whether colors are enabled or not.
+    bool warns_as_errors; ///< Flag controlling whether warnings are turned into errors or not.
+    size_t max_errors;    ///< Maximum number of errors before the log stops displaying them.
+    size_t max_warns;     ///< Maximum number of warnings before the log stops displaying them.
+    size_t error_count;   ///< Current number of errors.
+    size_t warn_count;    ///< Current number of warnings.
 
     /// Callback to use when printing diagnostics on the starting row of a given source file
     /// location. Returns the number of characters written on the left of, and inside the first row

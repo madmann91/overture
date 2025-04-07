@@ -90,6 +90,9 @@ void log_msg_from_args(
     const char* fmt,
     va_list args)
 {
+    if (log->warns_as_errors && tag == MSG_WARN)
+        tag = MSG_ERROR;
+
     log->error_count += tag == MSG_ERROR ? 1 : 0;
     log->warn_count  += tag == MSG_WARN ? 1 : 0;
 
