@@ -49,19 +49,23 @@ struct cli_option {
 
 /// @cond PRIVATE
 static inline enum cli_state cli_set_flag(void* data, char*) {
-    return *(bool*)data = true, CLI_STATE_ACCEPTED;
+    *(bool*)data = true;
+    return CLI_STATE_ACCEPTED;
 }
 
 static inline enum cli_state cli_set_uint32(void* data, char* arg) {
-    return *(uint32_t*)data = strtoul(arg, NULL, 10), CLI_STATE_ACCEPTED;
+    *(uint32_t*)data = strtoul(arg, NULL, 10);
+    return CLI_STATE_ACCEPTED;
 }
 
 static inline enum cli_state cli_set_uint64(void* data, char* arg) {
-    return *(uint64_t*)data = strtoumax(arg, NULL, 10), CLI_STATE_ACCEPTED;
+    *(uint64_t*)data = strtoumax(arg, NULL, 10);
+    return CLI_STATE_ACCEPTED;
 }
 
 static inline enum cli_state cli_set_string(void* data, char* arg) {
-    return *(char**)data = arg, CLI_STATE_ACCEPTED;
+    *(char**)data = arg;
+    return CLI_STATE_ACCEPTED;
 }
 /// @endcond
 

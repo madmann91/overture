@@ -14,8 +14,10 @@ TEST(file) {
     fputs(contents, file);
     fclose(file);
 
+    REQUIRE(file_exists(file_name));
+
     size_t file_size;
-    char* buf = file_read(file_name, &file_size);
+    char* buf = read_file(file_name, &file_size);
     REQUIRE(file_size == strlen(contents));
     REQUIRE(strcmp(buf, contents) == 0);
     free(buf);

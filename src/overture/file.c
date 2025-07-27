@@ -2,13 +2,15 @@
 #include "mem.h"
 
 #include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
 #ifndef _WIN32
 #include <sys/stat.h>
 #include <unistd.h>
 #endif
 
-char* file_read(const char* file_name, size_t* total_size) {
+char* read_file(const char* file_name, size_t* total_size) {
     FILE* file = fopen(file_name, "rb");
     if (!file)
         return NULL;
@@ -65,4 +67,43 @@ size_t file_size(const char* file_name) {
         return 0;
     return st.st_size;
 #endif
+}
+
+char* full_path(const char* file_name) {
+#if _XOPEN_SOURCE >= 500 || _DEFAULT_SOURCE || _BSD_SOURCE
+    return realpath(file_name, NULL);
+#elif WIN32
+    return _fullpath(NULL, file_name, 0);
+#else
+#warning "Missing implementation for `realpath()` -- Reported file paths will be incorrect"
+    return strdup(file_name);
+#endif
+}
+
+bool is_path_sep(char c) {
+    return
+#if WIN32
+        c == '\\' ||
+#endif
+        c == '/';
+}
+
+struct file_path split_path(struct str_view file_name) {
+    size_t dir_end   = 0;
+    size_t ext_begin = file_name.length;
+    for (size_t i = file_name.length; i-- > 0; ) {
+        if (is_path_sep(file_name.data[i])) {
+            dir_end = i;
+            break;
+        }
+
+        if (file_name.data[i] == '.')
+            ext_begin = i;
+    }
+
+    return (struct file_path) {
+        .dir_name  = { .data = file_name.data,               .length = dir_end },
+        .base_name = { .data = file_name.data + dir_end + 1, .length = ext_begin - dir_end - 1 },
+        .ext       = { .data = file_name.data + ext_begin,   .length = file_name.length - ext_begin },
+    };
 }

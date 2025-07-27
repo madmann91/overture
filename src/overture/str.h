@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mem.h"
+#include "vec.h"
 #include "hash.h"
 
 #include <stdio.h>
