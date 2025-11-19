@@ -22,43 +22,31 @@ enum msg_tag {
 struct source_pos {
     uint32_t row;   ///< Source file row (1-based).
     uint32_t col;   ///< Source file column (1-based).
-    size_t bytes;   ///< Number of bytes away from the beginning of the file.
 };
 
 /// Location within a source file.
 struct file_loc {
-    const char* file_name;
+    struct str_view file_name;
     struct source_pos begin, end;
 };
 
-/// Size, in characters, of a source file line corresponding to a source file location.
-struct line_size { 
-    size_t left;    ///< Number of characters before the beginning of the location.
-    size_t inside;  ///< Number of characters inside the location, until the end of the line (whichever ends first).
+/// Opaque callback object to extract source file lines.
+struct line_reader {
+    void* data;
+    struct str_view (*read_line)(void* data, struct str_view file_name, uint32_t line);
 };
 
 /// User-facing application log containing error and warning messages.
 struct log {
-    FILE* file;           ///< Stream where messages are shown.
-    bool disable_colors;  ///< Flag controlling whether colors are enabled or not.
-    bool warns_as_errors; ///< Flag controlling whether warnings are turned into errors or not.
-    size_t max_errors;    ///< Maximum number of errors before the log stops displaying them.
-    size_t max_warns;     ///< Maximum number of warnings before the log stops displaying them.
-    size_t error_count;   ///< Current number of errors.
-    size_t warn_count;    ///< Current number of warnings.
-
-    /// Callback to use when printing diagnostics on the starting row of a given source file
-    /// location. Returns the number of characters written on the left of, and inside the first row
-    /// of the file location. When `NULL`, diagnostics are turned off.
-    struct line_size (*print_line)(struct log*, const struct file_loc* loc);
+    FILE* file;                         ///< Stream where messages are shown.
+    bool disable_colors;                ///< Flag controlling whether colors are enabled or not.
+    bool warns_as_errors;               ///< Flag controlling whether warnings are turned into errors or not.
+    size_t max_errors;                  ///< Maximum number of errors before the log stops displaying them.
+    size_t max_warns;                   ///< Maximum number of warnings before the log stops displaying them.
+    size_t error_count;                 ///< Current number of errors.
+    size_t warn_count;                  ///< Current number of warnings.
+    struct line_reader* line_reader;    ///< Source file accessor to print line diagnostics.
 };
-
-/// Returns a view for the given file location, given an array of bytes with the file contents.
-struct str_view file_loc_view(const struct file_loc*, const char* file_data);
-
-/// Default implementation for `print_line`. This implementation opens the file mentioned in the
-/// source file location on disk, and prints a line from it.
-struct line_size log_print_line(struct log* log, const struct file_loc* loc);
 
 /// Prints a log message.
 /// @param msg_tag Type of message to show.

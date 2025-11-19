@@ -12,40 +12,6 @@ struct styles {
     const char* reset;
 };
 
-struct str_view file_loc_view(const struct file_loc* loc, const char* file_data) {
-    assert(file_data || loc->end.bytes == loc->begin.bytes);
-    return (struct str_view) {
-        .data = file_data + loc->begin.bytes,
-        .length = loc->end.bytes - loc->begin.bytes
-    };
-}
-
-struct line_size log_print_line(struct log* log, const struct file_loc* loc) {
-    struct line_size line_size = {};
-    FILE* file = fopen(loc->file_name, "rb");
-    if (!file)
-        return line_size;
-
-    fseek(file, loc->begin.bytes + 1 - loc->begin.col, SEEK_SET);
-    for (size_t col = 1;; ++col) {
-        int c = fgetc(file);
-        if (c == EOF || c == '\n')
-            break;
-        size_t char_count = 0;
-        if (c == '\t')
-            fputs("    ", log->file), char_count = 4;
-        else
-            fputc(c, log->file), char_count = 1;
-        bool is_left   = col < loc->begin.col;
-        bool is_inside = !is_left && (loc->begin.row < loc->end.row || col < loc->end.col);
-        line_size.left   += is_left   ? char_count : 0;
-        line_size.inside += is_inside ? char_count : 0;
-    }
-
-    fclose(file);
-    return line_size;
-}
-
 static inline int count_digits(uint32_t i) {
     int count = 1;
     while (i >= 10)
@@ -63,20 +29,19 @@ static inline void print_diagnostic(
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
     fprintf(log->file, "%s|%s\n", styles->msg, styles->reset);
 
+    struct str_view line = log->line_reader->read_line(log->line_reader->data, loc->file_name, loc->begin.row);
     fprintf(log->file, " %s%*"PRIu32"%s ", styles->range, indent_size, loc->begin.row, styles->reset);
-    fprintf(log->file, "%s|%s", styles->msg, styles->reset);
-    struct line_size line_size = log->print_line(log, loc);
-    fputs("\n", log->file);
+    fprintf(log->file, "%s|%s%.*s\n", styles->msg, styles->reset, (int)line.length, line.data);
 
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
-    fprintf(log->file, "%s|%s%*s", styles->msg, styles->reset, (int)line_size.left, "");
+    fprintf(log->file, "%s|%s%*s", styles->msg, styles->reset, (int)loc->begin.col - 1, "");
     fputs(styles->msg, log->file);
     if (loc->begin.row == loc->end.row) {
-        for (size_t i = 0; i < line_size.inside; ++i)
+        for (size_t i = 0; i < loc->end.col; ++i)
             fputc('^', log->file);
     } else {
         fputc('^', log->file);
-        for (size_t i = 1; i < line_size.inside; ++i)
+        for (size_t i = 1, n = line.length - loc->begin.col; i < n; ++i)
             fputc('.', log->file);
     }
     fputs(styles->reset, log->file);
@@ -127,18 +92,18 @@ void log_msg_from_args(
     vfprintf(log->file, fmt, args);
     fprintf(log->file, "\n");
 
-    if (loc && loc->file_name) {
-        fprintf(log->file, "  in ");
-        fprintf(log->file, "%s%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
+    if (loc) {
+        fprintf(log->file, "  in %s%.*s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
             styles.range,
-            loc->file_name,
+            (int)loc->file_name.length,
+            loc->file_name.data,
             loc->begin.row,
             loc->begin.col,
             loc->end.row,
             loc->end.col,
             styles.reset);
 
-        if (log->print_line)
+        if (log->line_reader)
             print_diagnostic(log, loc, &styles);
     }
 }
