@@ -49,10 +49,15 @@ struct str {
     return (struct str) {};
 }
 
+/// Extracts the sub-string starting at the given index and with the given length.
+[[nodiscard]] static inline struct str_view str_view_substr(struct str_view str_view, size_t start, size_t length) {
+    assert(start + length <= str_view.length);
+    return (struct str_view) { .data = str_view.data + start, .length = length };
+}
+
 /// Shrinks a string view by the given number of characters on the left and on the right.
 [[nodiscard]] static inline struct str_view str_view_shrink(struct str_view str_view, size_t left, size_t right) {
-    assert(str_view.length >= left + right);
-    return (struct str_view) { .data = str_view.data + left, .length = str_view.length - left - right };
+    return str_view_substr(str_view, left, str_view.length - left - right);
 }
 
 [[nodiscard]] static inline struct str str_copy(struct str_view view) {
