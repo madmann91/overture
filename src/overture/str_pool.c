@@ -24,6 +24,15 @@ void str_pool_destroy(struct str_pool* str_pool) {
     free(str_pool);
 }
 
+const char* str_pool_find(struct str_pool* str_pool, const char* str) {
+    return str_pool_find_view(str_pool, STR_VIEW(str));
+}
+
+const char* str_pool_find_view(struct str_pool* str_pool, struct str_view str_view) {
+    const struct str_view* found = str_view_set_find(&str_pool->str_view_set, &str_view);
+    return found ? found->data : NULL;
+}
+
 const char* str_pool_insert(struct str_pool* str_pool, const char* str) {
     return str_pool_insert_view(str_pool, STR_VIEW(str));
 }
