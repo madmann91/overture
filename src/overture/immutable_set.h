@@ -134,8 +134,8 @@
         const struct name* first_set, \
         const struct name* second_set) \
     { \
-        elem_ty small_elem_buffer[IMMUTABLE_SET_SMALL_CAPACITY * 2]; \
-        elem_ty* merged_elems = small_elem_buffer; \
+        elem_ty small_elem_buf[IMMUTABLE_SET_SMALL_CAPACITY * 2]; \
+        elem_ty* merged_elems = small_elem_buf; \
         if (first_set->elem_count + second_set->elem_count > IMMUTABLE_SET_SMALL_CAPACITY * 2) \
             merged_elems = xmalloc(sizeof(elem_ty) * (first_set->elem_count + second_set->elem_count)); \
         size_t i = 0, j = 0, k = 0; \
@@ -154,7 +154,7 @@
         for (; j < second_set->elem_count; j++) \
             merged_elems[k++] = second_set->elems[j]; \
         const struct name* merged_set = name##_pool_insert_unsafe(pool, merged_elems, k); \
-        if (merged_elems != small_elem_buffer) \
+        if (merged_elems != small_elem_buf) \
             free(merged_elems); \
         return merged_set; \
     } \
