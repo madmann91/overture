@@ -37,11 +37,11 @@ static inline void print_diagnostic(
     fprintf(log->file, "%s|%s%*s", styles->msg, styles->reset, (int)loc->begin.col - 1, "");
     fputs(styles->msg, log->file);
     if (loc->begin.row == loc->end.row) {
-        for (size_t i = 0; i < loc->end.col; ++i)
+        for (size_t i = loc->begin.col; i < loc->end.col; ++i)
             fputc('^', log->file);
     } else {
         fputc('^', log->file);
-        for (size_t i = 1, n = line.length - loc->begin.col; i < n; ++i)
+        for (size_t i = loc->begin.col; i < line.length; ++i)
             fputc('.', log->file);
     }
     fputs(styles->reset, log->file);
