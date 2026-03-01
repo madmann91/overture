@@ -8,7 +8,7 @@
 
 static struct str_view read_line(
     [[maybe_unused]] void* data,
-    [[maybe_unused]] struct str_view file_name,
+    [[maybe_unused]] const char* file_name,
     uint32_t line)
 {
     static const char* lines[] = {
@@ -33,7 +33,7 @@ TEST(log) {
         .line_reader = &line_reader
     };
 
-    struct str_view file_name = STR_VIEW("stdin");
+    const char* file_name = "stdin";
     struct source_pos begin = { .row = 1, .col = 5 };
     struct source_pos mid1  = { .row = 1, .col = 13 };
     struct source_pos mid2  = { .row = 2, .col = 2 };
