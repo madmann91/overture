@@ -47,6 +47,7 @@
     }; \
     [[nodiscard]] VISIBILITY(vis) struct name name##_create_with_capacity(size_t); \
     [[nodiscard]] VISIBILITY(vis) struct name name##_create(void); \
+    [[nodiscard]] VISIBILITY(vis) elem_ty* name##_release(struct name*); \
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_resize(struct name*, size_t); \
     VISIBILITY(vis) void name##_push(struct name*, elem_ty const*); \
@@ -67,6 +68,11 @@
     } \
     VISIBILITY(vis) struct name name##_create(void) { \
         return (struct name) {}; \
+    } \
+    VISIBILITY(vis) elem_ty* name##_release(struct name* vec) { \
+        elem_ty* elems = vec->elems; \
+        *vec = name##_create(); \
+        return elems; \
     } \
     VISIBILITY(vis) void name##_destroy(struct name* vec) { \
         free(vec->elems); \

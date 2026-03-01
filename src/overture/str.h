@@ -77,6 +77,12 @@ struct str {
     };
 }
 
+[[nodiscard]] static inline struct str_view str_release(struct str* str) {
+    struct str_view data = str_to_view(str);
+    *str = str_create();
+    return data;
+}
+
 static inline void str_grow(struct str* str, size_t added_bytes) {
     if (str->length + added_bytes > str->capacity) {
         str->capacity += str->capacity >> 1;
@@ -109,8 +115,12 @@ static inline void str_destroy(struct str* str) {
 /// Makes sure the given string is zero-terminated. Returns a valid C-string that points to it.
 /// This function can be called several times, and will only append a terminator character once.
 static inline const char* str_terminate(struct str* str) {
-    if (str->length == 0 || str->data[str->length - 1] != 0)
+    if (str->length >= str->capacity) {
         str_push(str, '\0');
+        str->length--;
+    } else {
+        str->data[str->length] = 0;
+    }
     return str->data;
 }
 
