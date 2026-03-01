@@ -93,10 +93,9 @@ void log_msg_from_args(
     fprintf(log->file, "\n");
 
     if (loc) {
-        fprintf(log->file, "  in %s%.*s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
+        fprintf(log->file, "  in %s%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
             styles.range,
-            (int)loc->file_name.length,
-            loc->file_name.data,
+            loc->file_name,
             loc->begin.row,
             loc->begin.col,
             loc->end.row,

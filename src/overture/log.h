@@ -26,14 +26,14 @@ struct source_pos {
 
 /// Location within a source file.
 struct file_loc {
-    struct str_view file_name;
+    const char* file_name;
     struct source_pos begin, end;
 };
 
 /// Opaque callback object to extract source file lines.
 struct line_reader {
     void* data;
-    struct str_view (*read_line)(void* data, struct str_view file_name, uint32_t line);
+    struct str_view (*read_line)(void* data, const char* file_name, uint32_t line);
 };
 
 /// User-facing application log containing error and warning messages.
