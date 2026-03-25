@@ -24,14 +24,17 @@ static inline void print_diagnostic(
     const struct file_loc* loc,
     const struct styles* styles)
 {
+    struct file_line line = log->line_reader->read_line(log->line_reader->data, loc->file_name, loc->begin.row);
+    if (!line.is_valid)
+        return;
+
     int indent_size = count_digits(loc->end.row);
 
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
     fprintf(log->file, "%s|%s\n", styles->msg, styles->reset);
 
-    struct str_view line = log->line_reader->read_line(log->line_reader->data, loc->file_name, loc->begin.row);
     fprintf(log->file, " %s%*"PRIu32"%s ", styles->range, indent_size, loc->begin.row, styles->reset);
-    fprintf(log->file, "%s|%s%.*s\n", styles->msg, styles->reset, (int)line.length, line.data);
+    fprintf(log->file, "%s|%s%.*s\n", styles->msg, styles->reset, (int)line.contents.length, line.contents.data);
 
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
     fprintf(log->file, "%s|%s%*s", styles->msg, styles->reset, (int)loc->begin.col - 1, "");
@@ -41,7 +44,7 @@ static inline void print_diagnostic(
             fputc('^', log->file);
     } else {
         fputc('^', log->file);
-        for (size_t i = loc->begin.col; i < line.length; ++i)
+        for (size_t i = loc->begin.col; i < line.contents.length; ++i)
             fputc('.', log->file);
     }
     fputs(styles->reset, log->file);

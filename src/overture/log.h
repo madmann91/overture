@@ -30,10 +30,16 @@ struct file_loc {
     struct source_pos begin, end;
 };
 
+/// Contents of a line in a source file.
+struct file_line {
+    bool is_valid;
+    struct str_view contents;
+};
+
 /// Opaque callback object to extract source file lines.
 struct line_reader {
     void* data;
-    struct str_view (*read_line)(void* data, const char* file_name, uint32_t line);
+    struct file_line (*read_line)(void* data, const char* file_name, uint32_t line);
 };
 
 /// User-facing application log containing error and warning messages.

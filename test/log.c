@@ -6,7 +6,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-static struct str_view read_line(
+static struct file_line read_line(
     [[maybe_unused]] void* data,
     [[maybe_unused]] const char* file_name,
     uint32_t line)
@@ -16,8 +16,11 @@ static struct str_view read_line(
         " efgh"
     };
     if (line <= 0 || line >= 3)
-        return (struct str_view) {};
-    return STR_VIEW(lines[line - 1]);
+        return (struct file_line) {};
+    return (struct file_line) {
+        .is_valid = true,
+        .contents = STR_VIEW(lines[line - 1])
+    };
 }
 
 TEST(log) {
