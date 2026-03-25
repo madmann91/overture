@@ -19,6 +19,9 @@
 /// @return `true` if the given file exists, otherwise `false`.
 [[nodiscard]] bool file_exists(const char* file_name);
 
+/// @return `true` if the given path is a file, otherwise `false`.
+[[nodiscard]] bool is_file(const char* path);
+
 /// @return The file size in bytes, or 0 if the file does not exist.
 [[nodiscard]] size_t file_size(const char* file_name);
 

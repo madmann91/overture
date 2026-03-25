@@ -5,8 +5,15 @@
 #include <string.h>
 #include <limits.h>
 
-#ifndef _WIN32
+#include <sys/types.h>
 #include <sys/stat.h>
+
+#ifdef _WIN32
+#define access _access
+#define stat _stat
+#define F_OK 0
+#define S_IFREG _S_IFREG
+#else
 #include <unistd.h>
 #endif
 
@@ -41,32 +48,21 @@ char* read_file(const char* file_name, size_t* total_size) {
 }
 
 bool file_exists(const char* file_name) {
-#ifdef _WIN32
-    FILE* file = fopen(file_name, "rb");
-    if (!file)
-        return false;
-    fclose(file);
-    return true;
-#else
     return access(file_name, F_OK) == 0;
-#endif
+}
+
+bool is_file(const char* path) {
+    struct stat st;
+    if (stat(path, &st) != 0)
+        return false;
+    return (st.st_mode & S_IFREG) != 0;
 }
 
 size_t file_size(const char* file_name) {
-#ifdef _WIN32
-    FILE* file = fopen(file_name, "rb");
-    if (!file)
-        return 0;
-    fseek(file, 0, SEEK_END);
-    long pos = ftell(f);
-    fclose(file);
-    return pos;
-#else
     struct stat st;
     if (stat(file_name, &st) != 0)
         return 0;
     return st.st_size;
-#endif
 }
 
 char* full_path(const char* file_name) {
