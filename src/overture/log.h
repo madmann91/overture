@@ -27,6 +27,8 @@ struct source_pos {
 /// Location within a source file.
 struct file_loc {
     const char* file_name;
+    const char* displayed_file_name;
+    uint32_t displayed_line;
     struct source_pos begin, end;
 };
 
@@ -46,7 +48,9 @@ struct line_reader {
 struct log {
     FILE* file;                         ///< Stream where messages are shown.
     bool disable_colors;                ///< Flag controlling whether colors are enabled or not.
+    bool disable_notes;                 ///< Flag controlling whether notes should be enabled or not.
     bool warns_as_errors;               ///< Flag controlling whether warnings are turned into errors or not.
+    bool was_last_msg_skipped;          ///< Set to true if the last message shown in the log was not shown.
     size_t max_errors;                  ///< Maximum number of errors before the log stops displaying them.
     size_t max_warns;                   ///< Maximum number of warnings before the log stops displaying them.
     size_t error_count;                 ///< Current number of errors.

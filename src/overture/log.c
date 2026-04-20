@@ -28,12 +28,12 @@ static inline void print_diagnostic(
     if (!line.is_valid)
         return;
 
-    int indent_size = count_digits(loc->end.row);
+    int indent_size = count_digits(loc->displayed_line);
 
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
     fprintf(log->file, "%s|%s\n", styles->msg, styles->reset);
 
-    fprintf(log->file, " %s%*"PRIu32"%s ", styles->range, indent_size, loc->begin.row, styles->reset);
+    fprintf(log->file, " %s%*"PRIu32"%s ", styles->range, indent_size, loc->displayed_line, styles->reset);
     fprintf(log->file, "%s|%s%.*s\n", styles->msg, styles->reset, (int)line.contents.length, line.contents.data);
 
     fprintf(log->file, " %s%*s%s ", styles->range, indent_size, " ", styles->reset);
@@ -64,12 +64,16 @@ void log_msg_from_args(
     log->error_count += tag == MSG_ERROR ? 1 : 0;
     log->warn_count  += tag == MSG_WARN ? 1 : 0;
 
-    if (log->error_count > log->max_errors || log->warn_count > log->max_warns)
+    if ((tag == MSG_ERROR && log->error_count > log->max_errors) ||
+        (tag == MSG_WARN  && log->warn_count > log->max_warns) ||
+        (tag == MSG_NOTE  && (log->disable_notes || log->was_last_msg_skipped)) ||
+        !log->file)
+    {
+        log->was_last_msg_skipped = true;
         return;
+    }
 
-    if (!log->file)
-        return;
-
+    log->was_last_msg_skipped = false;
     if (tag != MSG_NOTE && (log->error_count + log->warn_count) > 1)
         fprintf(log->file, "\n");
 
@@ -98,10 +102,10 @@ void log_msg_from_args(
     if (loc) {
         fprintf(log->file, "  in %s%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
             styles.range,
-            loc->file_name,
-            loc->begin.row,
+            loc->displayed_file_name,
+            loc->displayed_line,
             loc->begin.col,
-            loc->end.row,
+            loc->end.row - loc->begin.row + loc->displayed_line,
             loc->end.col,
             styles.reset);
 

@@ -31,7 +31,7 @@ TEST(log) {
     struct log log = {
         .file = mem_stream.file,
         .disable_colors = true,
-        .max_warns = 1,
+        .max_warns = 2,
         .max_errors = 2,
         .line_reader = &line_reader
     };
@@ -42,17 +42,19 @@ TEST(log) {
     struct source_pos mid2  = { .row = 2, .col = 2 };
     struct source_pos end   = { .row = 2, .col = 6 };
 
-    log_error(&log, &(struct file_loc) { .file_name = file_name, .begin = begin, .end = mid1 }, "%d", 1);
-    log_error(&log, &(struct file_loc) { .file_name = file_name, .begin = mid2,  .end = end },  "%d", 2);
-    log_warn(&log, &(struct file_loc) { .file_name = file_name, .begin = begin, .end = end },  "%d", 3);
+    log_error(&log, &(struct file_loc) { .displayed_file_name = file_name, .displayed_line = begin.row, .begin = begin, .end = mid1 }, "%d", 1);
+    log_error(&log, &(struct file_loc) { .displayed_file_name = file_name, .displayed_line = mid2.row, .begin = mid2,  .end = end },  "%d", 2);
+    log_warn(&log, &(struct file_loc) { .displayed_file_name = file_name, .displayed_line = begin.row, .begin = begin, .end = end },  "%d", 3);
     log_note(&log, NULL, "%d", 4);
-    log_error(&log, &(struct file_loc) { .file_name = file_name, .begin = begin, .end = end },  "%d", 5);
+    log_error(&log, &(struct file_loc) { .displayed_file_name = file_name, .displayed_line = begin.row, .begin = begin, .end = end },  "%d", 5);
     log_note(&log, NULL, "%d", 6);
+    log_warn(&log, &(struct file_loc) { .displayed_file_name = "foo", .displayed_line = 3, .begin = begin, .end = end },  "%d", 7);
+    log_note(&log, NULL, "%d", 8);
 
     mem_stream_destroy(&mem_stream);
 
     REQUIRE(log.error_count == 3);
-    REQUIRE(log.warn_count == 1);
+    REQUIRE(log.warn_count == 2);
 
     static const char* result =
         "error: 1\n"
@@ -72,7 +74,14 @@ TEST(log) {
         "   |\n"
         " 1 |    ab    cd\n"
         "   |    ^.......\n"
-        "note: 4\n";
+        "note: 4\n"
+        "\n"
+        "warning: 7\n"
+        "  in foo(3:5 - 4:6)\n"
+        "   |\n"
+        " 3 |    ab    cd\n"
+        "   |    ^.......\n"
+        "note: 8\n";
 
     REQUIRE(strcmp(mem_stream.buf, result) == 0);
     free(mem_stream.buf);
