@@ -121,7 +121,7 @@ static inline void print_failed_assert(
     const char* file,
     unsigned line)
 {
-    fprintf(stderr, "[%s] Assertion '%s' failed (%s:%u)\n", context->test->name, msg, file, line);
+    fprintf(stderr, "[%s] assertion '%s' failed (%s:%u)\n", context->test->name, msg, file, line);
 }
 
 void print_tests(FILE* file) {
@@ -162,13 +162,36 @@ void register_test(const char* name, void (*test_func) (struct test_context*)) {
 #include <signal.h>
 #include <sys/wait.h>
 
+static inline void checked_read(int fd, void* buf, size_t len) {
+    ssize_t res = read(fd, buf, len);
+    if (res == -1 || (size_t)res != len) {
+        fprintf(stderr, "could not read from pipe, try rebuilding with TEST_DISABLE_FORK\n");
+        abort();
+    }
+}
+
+static inline void checked_write(int fd, void* buf, size_t len) {
+    ssize_t res = write(fd, buf, len);
+    if (res == -1 || (size_t)res != len) {
+        fprintf(stderr, "could not write to pipe, try rebuilding with TEST_DISABLE_FORK\n");
+        abort();
+    }
+}
+
+static inline void checked_pipe(int* pipes) {
+    if (pipe(pipes) != 0) {
+        fprintf(stderr, "cannot create pipe, try rebuilding with TEST_DISABLE_FORK\n");
+        abort();
+    }
+}
+
 void require_fail(
     struct test_context* context,
     const char* msg,
     const char* file,
     unsigned line)
 {
-    write(context->write_pipe, context, sizeof(struct test_context));
+    checked_write(context->write_pipe, context, sizeof(struct test_context));
     close(context->write_pipe);
     print_failed_assert(context, msg, file, line);
     abort();
@@ -184,7 +207,7 @@ static inline struct test* find_test_by_pid(pid_t pid) {
 
 static void start_test(struct test* test) {
     int pipes[2];
-    pipe(pipes);
+    checked_pipe(pipes);
 
     pid_t pid = fork();
     if (pid == 0) {
@@ -194,7 +217,7 @@ static void start_test(struct test* test) {
             .write_pipe = pipes[1]
         };
         test->test_func(&context);
-        write(context.write_pipe, &context, sizeof(struct test_context));
+        checked_write(context.write_pipe, &context, sizeof(struct test_context));
         close(context.write_pipe);
         test_vec_destroy(&tests);
         exit(0);
@@ -237,7 +260,7 @@ bool run_tests(bool disable_colors) {
             test->status = TEST_SEGFAULT;
 
         struct test_context context;
-        read(test->read_pipe, &context, sizeof(struct test_context));
+        checked_read(test->read_pipe, &context, sizeof(struct test_context));
         close(test->read_pipe);
 
         test->passed_asserts += context.passed_asserts;
