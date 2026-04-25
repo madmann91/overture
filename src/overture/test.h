@@ -14,16 +14,24 @@
 /// ```
 ///
 /// The snippet above creates a test named `my_test` that is automatically registered at startup.
-/// A test driver can choose to enable or disable tests, and can then run the tests simply by
+/// Tests are disabled by default. To enable tests, use @ref filter_tests. Then run the tests by
 /// calling @ref run_tests:
 ///
 /// ```c
-/// reset_tests(false);
-/// enable_matching_tests("foo");
+/// // Enable all tests.
+/// filter_tests(0, NULL);
+/// run_tests();
+/// ```
+/// or
+///
+/// ```c
+/// // Enable only those tests beginning with "my_"
+/// filter_tests(1, (const char*[]) { "my_" });
 /// run_tests();
 /// ```
 ///
-/// The code above automatically takes care of spawning processes and running every test.
+/// The code above automatically takes care of spawning processes and running every test that was
+/// enabled.
 
 #include <stddef.h>
 #include <stdbool.h>
@@ -55,7 +63,7 @@ bool run_tests(bool disable_colors);
 
 /// Filters tests based on the names that appear in the given list of arguments.
 /// If there are no filters, all tests are enabled. This means that running `filter_tests(0, NULL)`
-/// enables all tests. Additionally, individual values in `argv` may be NULL.
+/// enables all tests. Additionally, individual values in `argv` may be `NULL`.
 /// @param argc Number of elements in @ref argv.
 /// @param argv Prefixes to use for matching.
 void filter_tests(int argc, char** argv);
