@@ -99,7 +99,7 @@ void log_msg_from_args(
     vfprintf(log->file, fmt, args);
     fprintf(log->file, "\n");
 
-    if (loc) {
+    if (loc && loc->displayed_file_name) {
         fprintf(log->file, "  in %s%s(%"PRIu32":%"PRIu32" - %"PRIu32":%"PRIu32")%s\n",
             styles.range,
             loc->displayed_file_name,
