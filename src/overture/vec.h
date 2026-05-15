@@ -12,10 +12,6 @@
 /// are stored on the stack when they are small enough, and are moved on the heap when they become
 /// too big.
 
-/// @cond PRIVATE
-#define SMALL_VEC_CAPACITY 8
-/// @endcond
-
 /// Iterates over the elements of a vector or small vector.
 /// @param elem_ty Type of the elements of the vector.
 /// @param elem Pointer to the vector element.
@@ -106,23 +102,26 @@
 
 /// Declares and implements a small vector data structure.
 /// @see VEC_DEFINE.
-#define SMALL_VEC_DEFINE(name, elem_ty, vis) \
-    SMALL_VEC_DECL(name, elem_ty, vis) \
+#define SMALL_VEC_DEFINE(name, elem_ty, small_capacity, vis) \
+    SMALL_VEC_DECL(name, elem_ty, small_capacity, vis) \
     SMALL_VEC_IMPL(name, elem_ty, vis)
 
 /// Declares a small vector data structure.
 /// @see SMALL_VEC_DEFINE.
-#define SMALL_VEC_DECL(name, elem_ty, vis) \
+#define SMALL_VEC_DECL(name, elem_ty, small_capacity, vis) \
     struct name { \
-        elem_ty small_elems[SMALL_VEC_CAPACITY]; \
+        union { \
+            elem_ty small_elems[small_capacity]; \
+            size_t capacity; \
+        }; \
         elem_ty* elems; \
-        size_t capacity; \
         size_t elem_count; \
     }; \
-    VISIBILITY(vis) struct name name##_create_with_capacity(size_t); \
-    VISIBILITY(vis) struct name name##_create(void); \
-    VISIBILITY(vis) void name##_relocate(struct name*); \
+    VISIBILITY(vis) size_t name##_small_capacity(); \
     VISIBILITY(vis) void name##_init(struct name*); \
+    VISIBILITY(vis) bool name##_is_small(const struct name*); \
+    VISIBILITY(vis) size_t name##_capacity(const struct name*); \
+    VISIBILITY(vis) void name##_move(struct name*, struct name*); \
     VISIBILITY(vis) void name##_destroy(struct name*); \
     VISIBILITY(vis) void name##_resize(struct name*, size_t); \
     VISIBILITY(vis) void name##_push(struct name*, elem_ty const*); \
@@ -134,44 +133,47 @@
 /// Implements a small vector data structure.
 /// @see SMALL_VEC_DEFINE.
 #define SMALL_VEC_IMPL(name, elem_ty, vis) \
-    VISIBILITY(vis) struct name name##_create_with_capacity(size_t capacity) { \
-        if (capacity <= SMALL_VEC_CAPACITY) \
-            capacity = SMALL_VEC_CAPACITY; \
-        elem_ty* elems = capacity <= SMALL_VEC_CAPACITY ? NULL : xmalloc(capacity * sizeof(elem_ty)); \
-        return (struct name) { \
-            .elems = elems, \
-            .elem_count = 0, \
-            .capacity = capacity \
-        }; \
-    } \
-    VISIBILITY(vis) struct name name##_create(void) { \
-        return name##_create_with_capacity(SMALL_VEC_CAPACITY); \
-    } \
-    VISIBILITY(vis) void name##_relocate(struct name* vec) { \
-        if (vec->capacity <= SMALL_VEC_CAPACITY) \
-            vec->elems = vec->small_elems; \
+    VISIBILITY(vis) size_t name##_small_capacity() { \
+        return sizeof(((struct name*)NULL)->small_elems) / sizeof(elem_ty); \
     } \
     VISIBILITY(vis) void name##_init(struct name* vec) { \
-        *vec = name##_create(); \
-        name##_relocate(vec); \
+        memset(vec, 0, sizeof(struct name)); \
+        vec->elems = vec->small_elems; \
+    } \
+    VISIBILITY(vis) bool name##_is_small(const struct name* vec) { \
+        return vec->elems == vec->small_elems; \
+    } \
+    VISIBILITY(vis) size_t name##_capacity(const struct name* vec) { \
+        return name##_is_small(vec) ? name##_small_capacity() : vec->capacity; \
+    } \
+    VISIBILITY(vis) void name##_move(struct name* to, struct name* from) { \
+        if (name##_is_small(from)) { \
+            xmemcpy(to->small_elems, from->small_elems, from->elem_count * sizeof(elem_ty)); \
+        } else { \
+            to->elems = from->elems; \
+            to->capacity = from->capacity; \
+        } \
+        to->elem_count = from->elem_count; \
+        memset(from, 0, sizeof(struct name)); \
     } \
     VISIBILITY(vis) void name##_destroy(struct name* vec) { \
-        if (vec->capacity > SMALL_VEC_CAPACITY) \
+        if (!name##_is_small(vec)) \
             free(vec->elems); \
         memset(vec, 0, sizeof(struct name)); \
     } \
     VISIBILITY(vis) void name##_resize(struct name* vec, size_t elem_count) { \
-        if (elem_count > vec->capacity) { \
-            bool is_allocated = vec->capacity > SMALL_VEC_CAPACITY; \
-            vec->capacity += vec->capacity >> 1; \
-            if (elem_count > vec->capacity) \
-                vec->capacity = elem_count; \
-            if (is_allocated) { \
-                vec->elems = xrealloc(vec->elems, vec->capacity * sizeof(elem_ty)); \
-            } else { \
-                vec->elems = xmalloc(vec->capacity * sizeof(elem_ty)); \
+        size_t capacity = name##_capacity(vec); \
+        if (elem_count > capacity) { \
+            capacity += capacity >> 1; \
+            if (elem_count > capacity) \
+                capacity = elem_count; \
+            if (name##_is_small(vec)) { \
+                vec->elems = xmalloc(capacity * sizeof(elem_ty)); \
                 xmemcpy(vec->elems, vec->small_elems, vec->elem_count * sizeof(elem_ty)); \
+            } else { \
+                vec->elems = xrealloc(vec->elems, capacity * sizeof(elem_ty)); \
             } \
+            vec->capacity = capacity; \
         } \
         vec->elem_count = elem_count; \
     } \
