@@ -1,14 +1,31 @@
 cmake_minimum_required(VERSION 3.21)
-project(overture VERSION 0.0.1)
+project(overture VERSION 0.0.2)
 
-option(TEST_DISABLE_FORK "Disable fork() in the testing framework." OFF)
+option(OVERTURE_TEST_DISABLE_FORK        "Disable fork() in the testing framework." OFF)
+option(OVERTURE_ENABLE_ADDRESS_SANITIZER "Enables the address sanitizer" OFF)
+option(OVERTURE_ENABLE_UNDEF_SANITIZER   "Enables the undefined value sanitizer" OFF)
+
+if (OVERTURE_ENABLE_ADDRESS_SANITIZER)
+    add_compile_options($<$<C_COMPILER_ID:GNU,Clang>:-fsanitize=address>)
+    add_link_options($<$<C_COMPILER_ID:GNU,Clang>:-fsanitize=address>)
+endif()
+
+if (OVERTURE_ENABLE_UNDEF_SANITIZER)
+    add_compile_options($<$<C_COMPILER_ID:GNU,Clang>:-fsanitize=undefined>)
+    add_link_options($<$<C_COMPILER_ID:GNU,Clang>:-fsanitize=undefined>)
+endif()
 
 if (PROJECT_IS_TOP_LEVEL)
-    option(ENABLE_COVERAGE "Enable code coverage build type and target." OFF)
-    option(ENABLE_DOXYGEN "Enable code documentation target via Doxygen." ON)
+    option(OVERTURE_ENABLE_COVERAGE "Enable code coverage build type and target." OFF)
+    option(OVERTURE_ENABLE_DOXYGEN  "Enable code documentation target via Doxygen." ON)
 
-    include(cmake/Coverage.cmake)
-    include(cmake/Doxygen.cmake)
+    if (OVERTURE_ENABLE_COVERAGE)
+        include(cmake/Coverage.cmake)
+    endif()
+
+    if (OVERTURE_ENABLE_DOXYGEN)
+        include(cmake/Doxygen.cmake)
+    endif()
 endif()
 
 add_compile_options(
