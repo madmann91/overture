@@ -13,5 +13,4 @@ TEST(mem_stream) {
     const char* text = "Hello world!";
     REQUIRE(strncmp(mem_stream.buf, text, strlen(text)) == 0);
     mem_stream_destroy(&mem_stream);
-    free(mem_stream.buf);
 }

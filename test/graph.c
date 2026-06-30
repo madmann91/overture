@@ -33,8 +33,15 @@ TEST(graph) {
     struct mem_stream mem_stream;
     mem_stream_init(&mem_stream);
     graph_print(mem_stream.file, &graph);
-    mem_stream_destroy(&mem_stream);
-    free(mem_stream.buf);
+    char* buf = mem_stream_release(&mem_stream);
+    const char* result =
+        "digraph {\n"
+        "    2 -> sink\n"
+        "    2 -> 2\n"
+        "    source -> 2\n"
+        "}\n";
+    REQUIRE(!strcmp(buf, result));
+    free(buf);
 
     struct graph_node_vec post_order = graph_compute_post_order(&graph, graph_dir_reverse(GRAPH_DIR_BACKWARD));
     REQUIRE(post_order.elem_count == 3);

@@ -51,10 +51,17 @@ static inline void mem_stream_flush(struct mem_stream* mem_stream) {
 #endif
 }
 
-/// Destroys a memory stream.
+/// Releases a memory stream, and returns the backing buffer.
 /// @warning The buffer of the memory stream must be released via `free()` manually.
-static inline void mem_stream_destroy(struct mem_stream* mem_stream) {
+static inline char* mem_stream_release(struct mem_stream* mem_stream) {
     mem_stream_flush(mem_stream);
     fclose(mem_stream->file);
-    mem_stream->file = NULL;
+    char* buf = mem_stream->buf;
+    memset(mem_stream, 0, sizeof(struct mem_stream));
+    return buf;
+}
+
+/// Destroys a memory stream.
+static inline void mem_stream_destroy(struct mem_stream* mem_stream) {
+    free(mem_stream_release(mem_stream));
 }

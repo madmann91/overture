@@ -51,7 +51,7 @@ TEST(log) {
     log_warn(&log, &(struct file_loc) { .displayed_file_name = "foo", .displayed_line = 3, .begin = begin, .end = end },  "%d", 7);
     log_note(&log, NULL, "%d", 8);
 
-    mem_stream_destroy(&mem_stream);
+    char* buf = mem_stream_release(&mem_stream);
 
     REQUIRE(log.error_count == 3);
     REQUIRE(log.warn_count == 2);
@@ -83,6 +83,6 @@ TEST(log) {
         "   |    ^.......\n"
         "note: 8\n";
 
-    REQUIRE(strcmp(mem_stream.buf, result) == 0);
-    free(mem_stream.buf);
+    REQUIRE(strcmp(buf, result) == 0);
+    free(buf);
 }
