@@ -30,8 +30,8 @@ jobs:
             -DCMAKE_C_COMPILER=${{matrix.compiler.cc}} \
             -DCMAKE_CXX_COMPILER=${{matrix.compiler.cxx}} \
             -DBUILD_TESTING=ON \
-            -DENABLE_DOXYGEN=OFF \
-            -DTEST_DISABLE_FORK=ON \
+            -DOVERTURE_ENABLE_DOXYGEN=OFF \
+            -DOVERTURE_TEST_DISABLE_FORK=ON \
             -S $GITHUB_WORKSPACE
 
       - name: Build

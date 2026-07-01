@@ -17,7 +17,7 @@ target_include_directories(overture INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
 
-if (WIN32 OR TEST_DISABLE_FORK)
+if (WIN32 OR OVERTURE_TEST_DISABLE_FORK)
     target_compile_definitions(overture_test PRIVATE -DTEST_DISABLE_FORK)
 else()
     message(STATUS "Building tests with process isolation enabled")
